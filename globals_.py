@@ -1,3 +1,6 @@
+import os
+
+ROOT_PATH = os.getcwd()
 Area = None
 AutoSaveData = b''
 AutoSaveDirty = False

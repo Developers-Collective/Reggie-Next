@@ -3,7 +3,9 @@ import os
 
 import common
 import globals_
+from gui.components.combo_box import ReggieComboBox
 from ui import GetIcon, HexSpinBox
+
 
 # Sets up the Background Dialog
 class BGDialog(QtWidgets.QDialog):
@@ -42,6 +44,7 @@ class BGDialog(QtWidgets.QDialog):
         mainLayout.addWidget(self.tabWidget)
         mainLayout.addWidget(buttonBox)
         self.setLayout(mainLayout)
+
 
 class BGTab(QtWidgets.QWidget):
     def __init__(self, z):
@@ -92,8 +95,7 @@ class BGTab(QtWidgets.QWidget):
                 box.setValue(value)
                 box.valueChanged.connect(self.handleHexBox)
 
-            # name combobox
-            self.name_boxes.append((QtWidgets.QComboBox(), QtWidgets.QComboBox(), QtWidgets.QComboBox()))
+            self.name_boxes.append((ReggieComboBox(), ReggieComboBox(), ReggieComboBox()))
 
             for box in self.name_boxes[-1]:
                 box.activated.connect(self.handleNameBox)
@@ -266,7 +268,7 @@ class BGTab(QtWidgets.QWidget):
 
                 filename = globals_.gamedef.bgFile(val + '.png', 'ab'[slot_id])
                 if not os.path.isfile(filename):
-                    filename = os.path.join('reggiedata', ['bga', 'bgb'][slot_id], 'no_preview.png')
+                    filename = os.path.join(globals_.ROOT_PATH, 'reggiedata', ['bga', 'bgb'][slot_id], 'no_preview.png')
 
                 pix = QtGui.QPixmap(filename)
                 pix = pix.scaled(int(pix.width() * scale), int(pix.height() * scale))
@@ -326,4 +328,3 @@ def calculateBgAlignmentMode(idA, idB, idC):
 
     # Doesn't fit into any of the above categories
     return 0
-

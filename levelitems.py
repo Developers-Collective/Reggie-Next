@@ -1873,6 +1873,7 @@ class SpriteItem(LevelEditorItem):
         self.objx = x
         self.objy = y
         self._spritedata: RawData = data
+
         self.LevelRect = QtCore.QRectF(self.objx / 16, self.objy / 16, 1.5, 1.5)
         self.ChangingPos = False
 
@@ -2088,6 +2089,9 @@ class SpriteItem(LevelEditorItem):
         """
         Updates the sizes for dynamically sized sprites
         """
+        if self.ImageObj is None:
+            raise TypeError('No appropriate image data provided!')
+
         CurrentRect = QtCore.QRectF(self.x(), self.y(), self.BoundingRect.width(), self.BoundingRect.height())
         CurrentAuxRects = []
         for auxObj in self.ImageObj.aux:

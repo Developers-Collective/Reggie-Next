@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
-
+import enum
 # Reggie Next - New Super Mario Bros. Wii Level Editor
 # Milestone 4
 # Copyright (C) 2009-2020 Treeki, Tempus, angelsl, JasonP27, Kamek64,
@@ -118,7 +118,9 @@ def loadIfNotInImageCache(name, filename):
     referenced by 'filename' and puts it there
     """
     if name not in ImageCache:
-        ImageCache[name] = GetImg(filename)
+        img = GetImg(filename)
+        if img is not None:
+            ImageCache[name] = img
 
 
 def MapPositionToZoneID(zones, x, y, get_id=False):
@@ -272,15 +274,18 @@ class SpriteImage_Static(SpriteImage):
             self.yOffset = offset[1]
 
     def dataChanged(self):
-        super().dataChanged()
+        try:
+            super().dataChanged()
 
-        if self.image is not None:
-            self.size = (
-                (self.image.width() / self.scale),
-                (self.image.height() / self.scale),
-            )
-        else:
-            del self.size
+            if self.image is not None:
+                self.size = (
+                    (self.image.width() / self.scale),
+                    (self.image.height() / self.scale),
+                )
+            else:
+                del self.size
+        except AttributeError:
+            ...
 
     def paint(self, painter):
         super().paint(painter)
@@ -465,6 +470,23 @@ class AuxiliarySpriteItem(AuxiliaryItem, QtWidgets.QGraphicsItem):
         Required for Qt
         """
         return self.BoundingRect
+
+
+class AuxiliaryTrackObjectType(enum.IntEnum):
+    Horizontal = 1
+    Vertical = 2
+
+    @classmethod
+    def get_val(cls, key: int | str) -> 'AuxiliaryTrackObjectType':
+        if isinstance(key, int):
+            return cls(key)
+
+        if key.lower() == 'horizontal':
+            return AuxiliaryTrackObjectType.Horizontal
+        elif key.lower() == 'vertical':
+            return AuxiliaryTrackObjectType.Vertical
+
+        raise ValueError(f'Invalid AuxiliaryTrackObjectType {key}')
 
 
 class AuxiliaryTrackObject(AuxiliarySpriteItem):
