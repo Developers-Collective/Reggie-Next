@@ -12,7 +12,7 @@ from xml.etree import ElementTree
 import globals_
 from ui import GetIcon, ReggieTheme, clipStr
 from dirty import setting, setSetting
-from dialogs import DiagnosticToolDialog
+from gui.dialogs.diagnostic_dialog import DiagnosticToolDialog
 from translation import ReggieTranslation
 from libs import lh
 from misc2 import LevelViewWidget
@@ -102,7 +102,7 @@ def FilesAreMissing():
 
 def SetGamePaths(new_stage_path, new_texture_path):
     """
-    Sets the NSMBW game path
+    Sets the NSMBWii game path
     """
     # os.path.join crashes if QStrings are used, so we must change the paths to
     # a Python string manually
@@ -112,7 +112,7 @@ def SetGamePaths(new_stage_path, new_texture_path):
 
 def areValidGamePaths(stage_check='ug', texture_check='ug'):
     """
-    Checks to see if the path for NSMBW contains a valid game
+    Checks to see if the path for NSMBWii contains a valid game
     """
     if stage_check == 'ug':
         stage_check = globals_.gamedef.GetStageGamePath()
@@ -402,12 +402,9 @@ def LoadZoneThemes(reload_=False):
     Ensures that custom zone themes get loaded
     """
     if (globals_.ZoneThemeValues is not None) and not reload_: return
-    
-    paths = getResourcePaths('zonethemes')
 
-    for path in paths:
-        with open(path, 'r', encoding='utf-8') as f:
-            globals_.ZoneThemeValues = [x.strip() for x in f]
+    with open(globals_.gamedef.file('zonethemes'), 'r', encoding='utf-8') as f:
+        globals_.ZoneThemeValues = [x.strip() for x in f]
 
 
 class SpriteDefinition:
@@ -464,8 +461,7 @@ class SpriteDefinition:
             'external',
             'multidualbox',
             'dynamicblockvalues',
-            'hexvalue',
-            'dynamicstring'
+            'hexvalue'
         ]
 
         for field in elem:
@@ -624,9 +620,6 @@ class SpriteDefinition:
                 round_bit1 = bit[0][1] // 4 * 4 + 1
 
                 fields.append((9, attribs['title'], [(round_bit0, round_bit1)], comment, required, advanced, comment2, advancedcomment, block))
-
-            elif field.tag == 'dynamicstring':
-                fields.append((10, attribs['title'], comment, required, advanced, comment2, advancedcomment, idtype, block))
 
     def parseBits(self, nybble_val: str) -> tuple[list[tuple[int, int]], int]:
         """
@@ -1577,8 +1570,7 @@ class PreferencesDialog(QtWidgets.QDialog):
                 # Place objects at full size
                 self.fullObjSize = QtWidgets.QCheckBox(globals_.trans.string('PrefsDlg', 37))
 
-                # Insert new path node
-                self.insertPathNode = QtWidgets.QCheckBox(globals_.trans.string('PrefsDlg', 39))
+                self.insertPathNode = QtWidgets.QCheckBox("Insert new path node after selected node")
 
                 # Create the main layout
                 L = QtWidgets.QFormLayout()
@@ -1781,9 +1773,9 @@ class PreferencesDialog(QtWidgets.QDialog):
 
                 self.themeBox.currentIndexChanged.connect(self.UpdatePreview)
 
-                boxGB = QtWidgets.QGroupBox(globals_.trans.string('PrefsDlg', 40))
+                boxGB = QtWidgets.QGroupBox('Themes')
                 L = QtWidgets.QFormLayout()
-                L.addRow(globals_.trans.string('PrefsDlg', 41), self.themeBox)
+                L.addRow('Theme:', self.themeBox)
                 L2 = QtWidgets.QGridLayout()
                 L2.addLayout(L, 0, 0)
                 boxGB.setLayout(L2)

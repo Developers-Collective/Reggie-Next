@@ -157,8 +157,8 @@ class GameDefMenu(QtWidgets.QMenu):
         self.addSeparator()
 
         act = QtWidgets.QAction(self)
-        act.setText(globals_.trans.string('Gamedefs', 19))
-        act.setToolTip(globals_.trans.string('Gamedefs', 20))
+        act.setText("Add a Reggie Patch Folder")
+        act.setToolTip("Creates a symlink in the /reggiedata/patches folder using add_reggie_patch")
         act.setActionGroup(self.actGroup)
         act.setCheckable(False)
         act.setChecked(False)
@@ -543,6 +543,8 @@ class ReggieGameDefinition:
             return self.base.file(name)  # it can recursively check its base, too
 
     def getImageClasses(self):
+        sprites.LoadBasics()
+
         """
         Gets all image classes
         """

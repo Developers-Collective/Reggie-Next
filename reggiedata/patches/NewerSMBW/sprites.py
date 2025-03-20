@@ -33,12 +33,6 @@ class SpriteImage_NewerSwitch(common.SpriteImage_Switch):
                 ImageCache['QSwitch%d' % i] = QtGui.QPixmap.fromImage(p)
                 ImageCache['QSwitchU%d' % i] = QtGui.QPixmap.fromImage(p.mirrored(True, True))
 
-        if 'PSwitch2' not in ImageCache:
-            for i in range(2, 5):
-                p = SLib.GetImg('P_switch%d.png' % i, True)
-                ImageCache['PSwitch%d' % i] = QtGui.QPixmap.fromImage(p)
-                ImageCache['PSwitchU%d' % i] = QtGui.QPixmap.fromImage(p.mirrored(True, True))
-        
         if 'ESwitch2' not in ImageCache:
             for i in range(2, 5):
                 p = SLib.GetImg('e_switch%d.png' % i, True)
@@ -507,12 +501,6 @@ class SpriteImage_NewerQSwitch(SpriteImage_NewerSwitch): # 40
     def __init__(self, parent):
         super().__init__(parent)
         self.switchType = "Q"
-
-
-class SpriteImage_NewerPSwitch(SpriteImage_NewerSwitch): # 41
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.switchType = "P"
 
 
 class SpriteImage_NewerExcSwitch(SpriteImage_NewerSwitch):  # 42
@@ -1781,14 +1769,17 @@ class SpriteImage_NewerMegaBuzzy(SLib.SpriteImage_StaticMultiple):  # 296
     @staticmethod
     def loadImages():
         if 'MegaBuzzyR' in ImageCache: return
-        ImageCache['MegaBuzzyR'] = SLib.GetImg('megabuzzy_right.png')
-        ImageCache['MegaBuzzyL'] = SLib.GetImg('megabuzzy_left.png')
+        buzz = SLib.GetImg('megabuzzy.png', True)
+        ImageCache['MegaBuzzyR'] = QtGui.QPixmap.fromImage(buzz)
+        ImageCache['MegaBuzzyL'] = QtGui.QPixmap.fromImage(buzz.mirrored(True, False))
         SLib.loadIfNotInImageCache('MegaBuzzyF', 'megabuzzy_front.png')
 
         if 'MegaBuzzyredR' in ImageCache: return
         for style in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'black', 'shyguy', 'monty'):
-            ImageCache['MegaBuzzy%sR' % style] = SLib.GetImg('megabuzzy_%s_right.png' % style)
-            ImageCache['MegaBuzzy%sL' % style] = SLib.GetImg('megabuzzy_%s_left.png' % style)
+            buzzy = SLib.GetImg('megabuzzy_%s.png' % style, True)
+            if buzzy is None: return
+            ImageCache['MegaBuzzy%sR' % style] = QtGui.QPixmap.fromImage(buzzy)
+            ImageCache['MegaBuzzy%sL' % style] = QtGui.QPixmap.fromImage(buzzy.mirrored(True, False))
             ImageCache['MegaBuzzy%sF' % style] = SLib.GetImg('megabuzzy_%s_front.png' % style)
 
     def dataChanged(self):
@@ -2273,7 +2264,6 @@ ImageClasses = {
     25: SpriteImage_NewerSpiny,
     26: SpriteImage_NewerUpsideDownSpiny,
     40: SpriteImage_NewerQSwitch,
-    41: SpriteImage_NewerPSwitch,
     42: SpriteImage_NewerExcSwitch,
     43: SpriteImage_NewerQSwitchBlock,
     45: SpriteImage_NewerExcSwitchBlock,

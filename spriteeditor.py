@@ -4,10 +4,8 @@ from xml.etree import ElementTree
 from PyQt5 import QtWidgets, QtCore, QtGui
 
 import globals_
-from levelitems import SpriteItem, ListWidgetItem_SortsByOther
-from raw_editor import RawEditor, RawData, FormattedLineEdit
+from gui.widgets.raw_editor import RawEditor, RawData, FormattedLineEdit
 from ui import GetIcon
-from dirty import SetDirty
 import common
 
 class DualBox(QtWidgets.QWidget):
@@ -1756,6 +1754,15 @@ class SpriteEditorWidget(QtWidgets.QWidget):
             return data
 
 
+
+
+
+
+
+
+
+
+
     class HexValuePropertyDecoder(PropertyDecoder):
         """
         Class that decodes/encodes sprite data to/from a spinbox
@@ -1841,134 +1848,6 @@ class SpriteEditorWidget(QtWidgets.QWidget):
             Handle the value changing in the spinbox
             """
             self.updateData.emit(self)
-
-
-    class DynamicStringPropertyDecoder(PropertyDecoder):
-        """
-        Class that decodes/encodes sprite data to/from a row of dualboxes
-        """
-
-        def __init__(self, title, comment, required, advanced, comment2, commentAdv, layout, row, parent, block: int = 1, block_count: int = 1):
-            """
-            Creates the widget
-            """
-            super().__init__()
-
-            assert block > 0
-
-            self._block_count = block_count
-            self._block_data_offset = 0
-
-            self.bit = [(0, 32)]
-            self.block = block
-            self.required = required
-            self.advanced = advanced
-            self.parent = parent
-            self.layout = layout
-            self.row = row
-            self.comment = comment
-            self.comment2 = comment2
-            self.commentAdv = commentAdv
-            self.bitnum = self.bit[0][1] - self.bit[0][0]
-            self.startbit = self.bit[0][0]
-
-            self._labels = []
-            self._expressionEdit = []
-            dbv_main_layout = QtWidgets.QGridLayout()
-            dbv_main_layout.setContentsMargins(0, 0, 0, 0)
-
-            title_label = QtWidgets.QLabel(title + ':')
-            layout.addWidget(title_label, row, 0, QtCore.Qt.AlignRight | QtCore.Qt.AlignTop)
-
-            dbv_widget = QtWidgets.QWidget()
-            dbv_widget.setLayout(dbv_main_layout)
-
-            self._expressionEdit = QtWidgets.QPlainTextEdit()
-            self._expressionEdit.textChanged.connect(self._handle_data_changed)
-            dbv_main_layout.addWidget(self._expressionEdit, 0, 0)
-
-
-            layout.addWidget(dbv_widget, row, 1)
-
-            col = 3
-            if comment is not None:
-                button_com = QtWidgets.QToolButton()
-                button_com.setIcon(GetIcon('setting-comment'))
-                button_com.setStyleSheet("border-radius: 50%")
-                button_com.clicked.connect(self.ShowComment)
-                button_com.setAutoRaise(True)
-
-                layout.addWidget(button_com, row, col)
-                col += 1
-
-            if comment2 is not None:
-                button_com2 = QtWidgets.QToolButton()
-                button_com2.setIcon(GetIcon('setting-comment2'))
-                button_com2.setStyleSheet("border-radius: 50%")
-                button_com2.clicked.connect(self.ShowComment2)
-                button_com2.setAutoRaise(True)
-
-                layout.addWidget(button_com2, row, col)
-                col += 1
-
-            if commentAdv is not None:
-                button_adv = QtWidgets.QToolButton()
-                button_adv.setIcon(GetIcon('setting-comment-adv'))
-                button_adv.setStyleSheet("border-radius: 50%")
-                button_adv.clicked.connect(self.ShowAdvancedComment)
-                button_adv.setAutoRaise(True)
-
-                layout.addWidget(button_adv, row, col)
-
-        def _handle_data_changed(self) -> None:
-            """
-            Handles the data being changed
-            """
-            self.updateData.emit(self)
-
-        def _fix_block_size(self, data: RawData) -> None:
-            return
-            if self._block_data_offset > len(data.blocks):
-                for i in range(self._block_data_offset - len(data.blocks)):
-                    data.blocks.append(bytes(4))
-
-            if self._block_data_offset < len(data.blocks):
-                for i in range(len(data.blocks) - self._block_data_offset):
-                    data.blocks.pop(-1)
-
-        def update(self, data: RawData, first: bool = False) -> None:
-            """
-            Updates the value shown by the widget
-            """
-            self.checkReq(data, first)
-
-            value = ""
-            for i in range(len(data.blocks[self.block-1:])):
-                value += data.blocks[self.block + i - 1].rstrip(b"\0").decode()
-
-            self._expressionEdit.blockSignals(True)
-            self._expressionEdit.setPlainText(value)
-            self._expressionEdit.blockSignals(False)
-
-        def assign(self, data: RawData) -> RawData:
-            """
-            Assigns the value states to the data
-            """
-            value  = self._expressionEdit.toPlainText().encode().rstrip(b"\0")
-            value += b"\0"*(4 - len(value) % 4)
-
-            i = 0
-            for i in range(0, len(value)//4):
-                while self.block + i > len(data.blocks):
-                    data.blocks.append(bytes(4))
-                data.blocks[self.block + i - 1] = value[i*4:(i+1)*4]
-
-            while self.block + i < len(data.blocks) and len(data.blocks) != 1:
-                data.blocks.pop(-1)
-
-            self._block_count = len(data.blocks)
-
-            return data
 
 
 
@@ -2178,13 +2057,6 @@ class SpriteEditorWidget(QtWidgets.QWidget):
 
             elif f[0] == 9:
                 nf = SpriteEditorWidget.HexValuePropertyDecoder(f[1], f[2], f[3], f[4], f[5], f[6], f[7], f[8], layout, row, self, f[-1])
-
-            elif f[0] == 10:
-                block_count = 1
-                if initial_data is not None:
-                    block_count += len(initial_data.blocks) - f[-1]
-                nf = SpriteEditorWidget.DynamicStringPropertyDecoder(f[1], f[2], f[3], f[4], f[5], f[6], layout, row, self, f[-1], block_count = block_count)
-
 
             nf.updateData.connect(self.HandleFieldUpdate)
             fields.append(nf)

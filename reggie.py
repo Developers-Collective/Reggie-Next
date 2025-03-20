@@ -79,7 +79,6 @@ if not hasattr(QtWidgets.QGraphicsItem, 'ItemSendsGeometryChanges'):
 ################################################################################
 
 # Local imports
-import archive
 import sprites
 import spritelib as SLib
 import common
@@ -97,11 +96,20 @@ from misc2 import LevelScene, LevelViewWidget
 from dirty import setting, setSetting, SetDirty
 from gamedef import GameDefMenu, LoadGameDef
 from levelitems import LocationItem, ZoneItem, ObjectItem, SpriteItem, EntranceItem, ListWidgetItem_SortsByOther, PathItem, CommentItem, PathEditorLineItem
-from dialogs import AutoSavedInfoDialog, DiagnosticToolDialog, ScreenCapChoiceDialog, AreaChoiceDialog, ObjectTypeSwapDialog, ObjectTilesetSwapDialog, ObjectShiftDialog, MetaInfoDialog, AboutDialog, CameraProfilesDialog
-from background import BGDialog
-from zones import ZonesDialog
+
+from gui.dialogs.cam_profiles_dialog import CameraProfilesDialog
+from gui.dialogs.about_dialog import AboutDialog
+from gui.dialogs.obj_shift_dialog import ObjectShiftDialog
+from gui.dialogs.obj_tile_swap_dialog import ObjectTilesetSwapDialog
+from gui.dialogs.obj_type_swap_dialog import ObjectTypeSwapDialog
+from gui.dialogs.meta_info import MetaInfoDialog
+from gui.dialogs.misc import AutoSavedInfoDialog, ScreenCapChoiceDialog, AreaChoiceDialog
+from gui.dialogs.diagnostic_dialog import DiagnosticToolDialog
+from gui.dialogs.background_dialog import BGDialog
+from gui.dialogs.zone_dialog import ZonesDialog
+
 from tiles import UnloadTileset, LoadTileset, LoadOverrides
-from area import AreaOptionsDialog
+from gui.dialogs.area_dialog import AreaOptionsDialog
 from level import Level_NSMBW
 from sidelists import Stamp, StampChooserWidget, SpriteList, SpritePickerWidget, ObjectPickerWidget, LevelOverviewWidget
 from spriteeditor import SpriteEditorWidget
@@ -119,15 +127,21 @@ def _excepthook(*exc_info):
     """
     separator = '-' * 80
     logFile = "log.txt"
-    notice = globals_.trans.string('ErrorDlg', 0, '[log]', logFile)
+    notice = \
+        """An unhandled exception occurred. Please report the problem """\
+        """in the Horizon Discord server.\n"""\
+        """A log will be written to "%s"."""\
+        """\n\nError information:\n""" % logFile
 
     timeString = time.strftime("%Y-%m-%d, %H:%M:%S")
 
     e = "".join(traceback.format_exception(*exc_info))
-    sections = [separator, timeString, separator, e]
+
+    short_msg = str(exc_info[1])
+    sections = [separator, timeString, separator, short_msg]
     msg = '\n'.join(sections)
 
-    globals_.ErrMsg += msg
+    globals_.ErrMsg += msg + e
 
     try:
         with open(logFile, "w", encoding="utf-8") as f:
@@ -138,10 +152,10 @@ def _excepthook(*exc_info):
 
     errorbox = QtWidgets.QMessageBox()
     errorbox.setText(notice + msg)
+    errorbox.setDetailedText(e)
     errorbox.exec_()
 
     globals_.DirtyOverride = 0
-
 
 # Override the exception handler with ours
 sys.excepthook = _excepthook
@@ -620,7 +634,7 @@ class ReggieWindow(QtWidgets.QMainWindow):
 
         self.CreateAction(
             'camprofiles', self.HandleCameraProfiles, GetIcon('camprofile'),
-            globals_.trans.stringOneLine('MenuItems', 140), globals_.trans.stringOneLine('MenuItems', 141),
+            'Camera Profiles...', 'Edit event-activated camera settings',
             QtGui.QKeySequence('Ctrl+Alt+C'),
         )
 
@@ -1068,7 +1082,7 @@ class ReggieWindow(QtWidgets.QMainWindow):
         self.objUseLayer2 = QtWidgets.QRadioButton('2')
         self.objUseLayer2.setToolTip(globals_.trans.string('Palette', 3))
 
-        self.layerChangeButton = QtWidgets.QPushButton(globals_.trans.string('Palette', 36))
+        self.layerChangeButton = QtWidgets.QPushButton("Change Layer")
         self.layerChangeButton.clicked.connect(self.ChangeSelectionLayer)
         self.layerChangeButton.setEnabled(False)
 
@@ -1506,6 +1520,7 @@ class ReggieWindow(QtWidgets.QMainWindow):
         ii = isinstance
         type_obj = ObjectItem
         type_spr = SpriteItem
+
         for obj in selitems:
             if ii(obj, type_obj):
                 clipboard_o.append(obj)
@@ -3238,6 +3253,9 @@ class ReggieWindow(QtWidgets.QMainWindow):
                 obj.updateObjCache()
 
         for sprite in globals_.Area.sprites:
+            if sprite.ImageObj is None:
+                raise TypeError(f'Image data for sprite {sprite} is "None" Cannot load its image data!')
+
             sprite.UpdateDynamicSizing()
             sprite.ImageObj.positionChanged()
 
@@ -3849,6 +3867,8 @@ class ReggieWindow(QtWidgets.QMainWindow):
         Handle the current sprite's data being updated
         """
         if self.spriteEditorDock.isVisible():
+
+
             obj = self.selObj
             obj.spritedata = data
             obj.UpdateListItem()
@@ -4146,6 +4166,7 @@ class ReggieWindow(QtWidgets.QMainWindow):
         """
         Pops up the options for Zone dialog
         """
+        # Load updated zone themes.
         LoadZoneThemes()
 
         dlg = ZonesDialog()
@@ -4155,65 +4176,70 @@ class ReggieWindow(QtWidgets.QMainWindow):
 
         SetDirty()
 
-        # resync the zones
-        items = self.scene.items()
-        func_ii = isinstance
-        type_zone = ZoneItem
-
-        for item in items:
-            if func_ii(item, type_zone):
+        # Remove all existing ZoneItem objects from the scene.
+        for item in self.scene.items():
+            if isinstance(item, ZoneItem):
                 self.scene.removeItem(item)
 
+        # Clear the global zones list.
         globals_.Area.zones = []
 
-        for i, tab in enumerate(dlg.zoneTabs):
-            z = tab.zoneObj
+        # Process each zone tab from the dialog.
+        for i, tab in enumerate(dlg.zone_tabs):
+            z = tab.zone_obj
             z.id = i
             z.UpdateTitle()
             globals_.Area.zones.append(z)
             self.scene.addItem(z)
 
-            z.objx = common.clamp(16, 24560, tab.Zone_xpos.value())
-            z.objy = common.clamp(16, 12272, tab.Zone_ypos.value())
-            z.width = min(24560 - z.objx, tab.Zone_width.value())
-            z.height = min(12272 - z.objy, tab.Zone_height.value())
+            # Clamp and update zone dimensions.
+            z.objx = common.clamp(16, 24560, tab.zone_xpos.value())
+            z.objy = common.clamp(16, 12272, tab.zone_ypos.value())
+            z.width = min(24560 - z.objx, tab.zone_width.value())
+            z.height = min(12272 - z.objy, tab.zone_height.value())
 
             z.prepareGeometryChange()
             z.UpdateRects()
             z.setPos(z.objx * 1.5, z.objy * 1.5)
 
-            z.modeldark = tab.Zone_modeldark.currentIndex()
-            z.terraindark = tab.Zone_terraindark.currentIndex()
-            z.cammode = tab.Zone_cammodezoom.modeButtonGroup.checkedId()
-            z.camzoom = tab.Zone_cammodezoom.screenSizes.currentIndex()
-            z.camtrack = tab.Zone_direction.currentIndex()
+            # Update rendering settings.
+            z.modeldark = tab.zone_modeldark.currentIndex()
+            z.terraindark = tab.zone_terraindark.currentIndex()
 
-            if tab.Zone_yrestrict.isChecked():
-                z.mpcamzoomadjust = tab.Zone_mpzoomadjust.value()
+            # Update camera settings.
+            z.cammode = tab.zone_cammodezoom.mode_button_group.checkedId()
+            z.camzoom = tab.zone_cammodezoom.screen_sizes.currentIndex()
+            z.camtrack = tab.zone_direction.currentIndex()
+
+            # Update zoom adjustment based on Y restriction.
+            if tab.zone_yrestrict.isChecked():
+                z.mpcamzoomadjust = tab.zone_mpzoomadjust.value()
             else:
                 z.mpcamzoomadjust = 15
 
+            # Update visibility.
             z.visibility = 0
+            if tab.zone_vspotlight.isChecked():
+                z.visibility |= (1 << 4)
+            if tab.zone_vfulldark.isChecked():
+                z.visibility |= (1 << 5)
+            z.visibility |= tab.zone_visibility.currentIndex()
 
-            if tab.Zone_vspotlight.isChecked():
-                z.visibility |= 1 << 4
-            if tab.Zone_vfulldark.isChecked():
-                z.visibility |= 1 << 5
+            # Update bounds.
+            z.yupperbound = tab.zone_yboundup.value()
+            z.ylowerbound = tab.zone_ybounddown.value()
+            z.yupperbound2 = tab.zone_yboundup2.value()
+            z.ylowerbound2 = tab.zone_ybounddown2.value()
+            z.yupperbound3 = tab.zone_yboundup3.value()
+            z.ylowerbound3 = tab.zone_ybounddown3.value()
 
-            z.visibility |= tab.Zone_visibility.currentIndex()
-
-            z.yupperbound = tab.Zone_yboundup.value()
-            z.ylowerbound = tab.Zone_ybounddown.value()
-            z.yupperbound2 = tab.Zone_yboundup2.value()
-            z.ylowerbound2 = tab.Zone_ybounddown2.value()
-            z.yupperbound3 = tab.Zone_yboundup3.value()
-            z.ylowerbound3 = tab.Zone_ybounddown3.value()
-
-            z.music = tab.Zone_musicid.value()
-            z.sfxmod = tab.Zone_sfx.currentIndex() << 4
-            if tab.Zone_boss.isChecked():
+            # Update audio settings.
+            z.music = tab.zone_musicid.value()
+            z.sfxmod = tab.zone_sfx.currentIndex() << 4
+            if tab.zone_boss.isChecked():
                 z.sfxmod |= 1
 
+        # Update any sprite positions that depend on zone settings.
         for spr in globals_.Area.sprites:
             spr.ImageObj.positionChanged()
 
@@ -4269,7 +4295,7 @@ class ReggieWindow(QtWidgets.QMainWindow):
 
         if do_save:
             fn = QtWidgets.QFileDialog.getSaveFileName(self,
-                globals_.trans.string('FileDlgs', 3), 'untitled.png',
+                os.path.join(globals_.trans.string('FileDlgs', 3), 'untitled.png'),
                 globals_.trans.string('FileDlgs', 4) + ' (*.png)')[0]
 
             if fn == '':

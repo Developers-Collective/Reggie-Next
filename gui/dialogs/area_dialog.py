@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets, QtCore
 import globals_
 from ui import GetIcon
 
+
 # Sets up the Area Options Menu
 class AreaOptionsDialog(QtWidgets.QDialog):
     """
@@ -23,7 +24,7 @@ class AreaOptionsDialog(QtWidgets.QDialog):
         self.LoadedSpritesTab = LoadedSpritesTab()
         self.tabWidget.addTab(self.TilesetsTab, globals_.trans.string('AreaDlg', 1))
         self.tabWidget.addTab(self.LoadingTab, globals_.trans.string('AreaDlg', 2))
-        self.tabWidget.addTab(self.LoadedSpritesTab, globals_.trans.string('AreaDlg', 46))
+        self.tabWidget.addTab(self.LoadedSpritesTab, "Loaded Sprites")
 
         buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
 
@@ -125,7 +126,8 @@ class TilesetsTab(QtWidgets.QWidget):
             # hardcoded initial width because the default width
             # is too small
             tree.setColumnWidth(0, 192)
-            tree.setHeaderLabels([globals_.trans.string('AreaDlg', 28), globals_.trans.string('AreaDlg', 29)])  # ['Name', 'File']
+            tree.setHeaderLabels(
+                [globals_.trans.string('AreaDlg', 28), globals_.trans.string('AreaDlg', 29)])  # ['Name', 'File']
             tree.setIndentation(16)
             if slot == 0:
                 handler = self.handleTreeSel0
@@ -193,7 +195,8 @@ class TilesetsTab(QtWidgets.QWidget):
             # Create the layout and add it to the widget
             L = QtWidgets.QGridLayout()
             L.addWidget(tree, 0, 0, 1, 2)
-            L.addWidget(QtWidgets.QLabel(globals_.trans.string('AreaDlg', 31, '[slot]', slot)), 1, 0)  # 'Tilesets (Pa[slot])'
+            L.addWidget(QtWidgets.QLabel(globals_.trans.string('AreaDlg', 31, '[slot]', slot)), 1,
+                        0)  # 'Tilesets (Pa[slot])'
             L.addWidget(line, 1, 1)
             L.setRowStretch(0, 1)
             widget.setLayout(L)
@@ -315,11 +318,11 @@ class LoadedSpritesTab(QtWidgets.QWidget):
         self.sprite_input = QtWidgets.QLineEdit()
         self.sprite_input.textChanged.connect(self.handle_input_change)
 
-        self.add_button = QtWidgets.QPushButton(globals_.trans.string('AreaDlg', 47))
+        self.add_button = QtWidgets.QPushButton("Add Sprite")
         self.add_button.clicked.connect(self.handle_add_sprite)
         self.add_button.setEnabled(False)
 
-        self.remove_button = QtWidgets.QPushButton(globals_.trans.string('AreaDlg', 48))
+        self.remove_button = QtWidgets.QPushButton("Remove Selected Sprite")
         self.remove_button.clicked.connect(self.handle_remove_sprite)
         self.remove_button.setEnabled(False)
 
@@ -335,12 +338,13 @@ class LoadedSpritesTab(QtWidgets.QWidget):
         auto_list.setModel(self.auto_model)
         auto_list.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 
-        sprites_layout.addWidget(QtWidgets.QLabel(globals_.trans.string('AreaDlg', 49)), 0, 0)
-        sprites_layout.addWidget(QtWidgets.QLabel(globals_.trans.string('AreaDlg', 50)), 0, 1)
+        sprites_layout.addWidget(QtWidgets.QLabel("Default"), 0, 0)
+        sprites_layout.addWidget(QtWidgets.QLabel("Custom"), 0, 1)
         sprites_layout.addWidget(auto_list, 1, 0)
         sprites_layout.addLayout(custom_layout, 1, 1)
 
-        explanation = QtWidgets.QLabel(globals_.trans.string('AreaDlg', 51))
+        explanation = QtWidgets.QLabel(
+            "On the left is a list of sprites already present in the level. On the right, you can add more sprites you'd like to load.")
         explanation.setWordWrap(True)
 
         layout = QtWidgets.QVBoxLayout()
@@ -380,7 +384,8 @@ class LoadedSpritesTab(QtWidgets.QWidget):
         and saves the entered values in reggie.py. This code is pretty hacky,
         but at least it works.
         """
-        return ["[%d] %s" % (x, globals_.Sprites[x].name if 0 <= x < globals_.NumSprites else "UNKNOWN") for x in list_of_sprites]
+        return ["[%d] %s" % (x, globals_.Sprites[x].name if 0 <= x < globals_.NumSprites else "UNKNOWN") for x in
+                list_of_sprites]
 
     def handle_add_sprite(self, _):
         """
@@ -398,7 +403,8 @@ class LoadedSpritesTab(QtWidgets.QWidget):
             return
 
         index = self.custom_model.index(self.custom_model.rowCount() - 1, 0)
-        self.custom_model.setData(index, "[%d] %s" % (sprite_id, globals_.Sprites[sprite_id].name if 0 <= sprite_id < globals_.NumSprites else "UNKNOWN"))
+        self.custom_model.setData(index, "[%d] %s" % (
+        sprite_id, globals_.Sprites[sprite_id].name if 0 <= sprite_id < globals_.NumSprites else "UNKNOWN"))
 
         # Clear the input so the user can enter a new sprite number
         self.sprite_input.clear()

@@ -35,18 +35,18 @@ import math
 import random
 
 from PyQt5 import QtCore, QtGui
-Qt = QtCore.Qt
 
 import spritelib as SLib
 import sprites_common as common
 import globals_
+from core.sprites.sprite import static_sprite, create_static_sprite, get_registered_sprites, Offset
+
+Qt = QtCore.Qt
 ImageCache = SLib.ImageCache
 
 
 ################################################################
 ################################################################
-
-
 def LoadBasics():
     """
     Loads basic images used in NSMBW
@@ -86,7 +86,253 @@ def LoadBasics():
     SLib.loadIfNotInImageCache('VineBtm', 'vine_btm.png')
 
 
-# ---- Low-Level Classes ----
+######### STATIC SPRITES #########
+
+create_static_sprite('StarCoin', 32, preloaded=True, show_sprite_box=True)
+create_static_sprite('StarCoin_Line', 155, base_sprite='StarCoin')
+create_static_sprite('StarCoin_Bolt', 389, base_sprite='StarCoin')
+
+create_static_sprite('Coin_Floating', 225, preloaded=True, initial_img='SpecialCoin')
+create_static_sprite('PCoin', 237, preloaded=True)
+create_static_sprite('Coin_Rotation', 253, preloaded=True, initial_img='SpecialCoin')
+create_static_sprite('Coin_RollingHill', 371, preloaded=True, initial_img='SpecialCoin')
+create_static_sprite('Coin_Bolt', 390, preloaded=True, initial_img='SpecialCoin')
+create_static_sprite('SpinjumpCoin', 417, preloaded=True, initial_img='SpecialCoin', alpha=0.55)
+
+create_static_sprite('Swooper', 100, load_files={'Swooper': 'swooper.png'}, offset=(-8, 8))
+create_static_sprite('Bobomb', 101, load_files={'Bobomb': 'bobomb.png'}, offset=(-8, 8))
+create_static_sprite('Broozer', 102, load_files={'Broozer': 'broozer.png'}, offset=(-9, -17))
+create_static_sprite('Amp', 104, load_files={'Amp': 'amp.png'}, offset=(-8, 8))
+create_static_sprite('AmpLine', 108, base_sprite='Amp')
+create_static_sprite('UnusedWiimoteDoor', 319, load_files={'UnusedGiantDoor': 'unused_giant_door.png'}, offset=(-8, -8))
+create_static_sprite('UnusedSlidingWiimoteDoor', 320, base_sprite='UnusedWiimoteDoor')
+create_static_sprite('BoxGeneratr', 318, load_files={'BoxGenerator': 'box_generator.png'}, offset=(0, -64))
+create_static_sprite('Bolt', 315, load_files={'Bolt': 'bolt.png'}, offset=(2, 0))
+create_static_sprite('GhostHouseStand', 325, load_files={'GhostHouseStand': 'ghost_house_stand.png'}, offset=(8, -16))
+create_static_sprite('LinePlatformBolt', 327, load_files={'LinePlatformBolt': 'line_platform_with_bolt.png'},
+                     offset=(0, -16))
+create_static_sprite('PlayerBlockPlatform', 333, load_files={'PlayerBlockPlatform': 'player_block_platform.png'})
+create_static_sprite('FlipFence', 127, load_files={'FlipFence': 'flipfence.png'}, offset=(-4, -8), z=24999)
+create_static_sprite('FlipFenceLong', 128, load_files={'FlipFenceLong': 'flipfence_long.png'}, offset=(6, 0), z=24999)
+create_static_sprite('RedCoin', 144, preloaded=True)
+create_static_sprite('ChainChomp', 146, load_files={'ChainChomp': 'chain_chomp.png'}, offset=(-90, -32))
+create_static_sprite('Porcupuffer', 151, load_files={'Porcupuffer': 'porcu_puffer.png'}, offset=(-16, -18))
+create_static_sprite('ChestnutGoomba', 170, load_files={'ChestnutGoomba': 'chestnut_goomba.png'}, offset=(-6, -8))
+create_static_sprite('PowerupBubble', 171, load_files={'PowerupBubble': 'powerup_bubble.png'}, offset=(-8, -8))
+create_static_sprite('GiantFloatingLog', 173, load_files={'GiantFloatingLog': 'giant_floating_log.png'},
+                     offset=(-152, -32))
+create_static_sprite('RouletteBlock', 176, load_files={'RouletteBlock': 'roulette.png'}, offset=(-4, -8))
+create_static_sprite('FireChomp', 177, load_files={'FireChomp': 'fire_chomp.png'}, offset=(-2, -20))
+create_static_sprite('CheepChomp', 180, load_files={'CheepChomp': 'cheep_chomp.png'}, offset=(-32, -16))
+create_static_sprite('ToadBalloon', 185, load_files={'ToadBalloon': 'toad_balloon.png'}, offset=(-4, -4))
+create_static_sprite('PlayerBlock', 187, load_files={'PlayerBlock': 'player_block.png'})
+create_static_sprite('MidwayFlag', 188, load_files={'MidwayFlag': 'midway_flag.png'}, offset=(0, -38))
+create_static_sprite('LarryKoopa', 189, load_files={'LarryKoopa': 'Larry_Koopa.png'}, offset=(-17, -33))
+create_static_sprite('MegaGoomba', 199, load_files={'MegaGoomba': 'mega_goomba.png'}, offset=(-11, -37))
+create_static_sprite('Microgoomba', 200, load_files={'Microgoomba': 'microgoomba.png'}, offset=(4, 8))
+create_static_sprite('MGCannon', 202, load_files={'MGCannon': 'mg_cannon.png'}, offset=(-12, -42))
+create_static_sprite('MGChest', 203, load_files={'MGChest': 'mg_chest.png'}, offset=(-12, -11))
+create_static_sprite('FreefallGH', 214, load_files={'FreefallGH': 'freefall_gh_platform.png'}, z=24999)
+create_static_sprite('SpikeU', 222, load_files={'SpikeU': 'spike_up.png'})
+create_static_sprite('SandPillar', 229, load_files={'SandPillar': 'sand_pillar.png'}, offset=(-33, -150), alpha=0.65)
+create_static_sprite('Bramball', 230, load_files={'Bramball': 'bramball.png'}, offset=(-32, -48))
+create_static_sprite('BoltPlatformWire', 470, load_files={'BoltPlatformWire': 'bolt_platform_wire.png'},
+                     offset=(5, -240))
+create_static_sprite('MechaKoopa', 232, load_files={'MechaKoopa': 'mechakoopa.png'}, offset=(-8, -14))
+create_static_sprite('Foo', 238, load_files={'Foo': 'foo.png'}, offset=(-8, -16))
+create_static_sprite('GiantWiggler', 240, load_files={'GiantWiggler': 'giant_wiggler.png'}, offset=(-24, -64))
+create_static_sprite('FallingLedgeBar', 242, load_files={'FallingLedgeBar': 'falling_ledge_bar.png'})
+create_static_sprite('EventDeactivBlock', 252, tile=49)
+create_static_sprite('SuperGuide', 477, load_files={'SuperGuide': 'superguide_block.png'}, offset=(-4, -4))
+create_static_sprite('FlyingWrench', 476, load_files={'Wrench': 'wrench.png'})
+create_static_sprite('SpinningThinBars', 457, load_files={'SpinningThinBars': 'spinning_thin_bars.png'},
+                     offset=(-115.4, -115.4))
+create_static_sprite('HammerPlatform', 455, load_files={'HammerPlatform': 'hammer_platform.png'}, offset=(-24, -8),
+                     z=24999)
+create_static_sprite('ScaredyRatDespawner', 451, load_files={'ScaredyRatDespawner': 'scaredy_rat_despawner.png'})
+create_static_sprite('MetalBar', 448, load_files={'MetalBar': 'metal_bar.png'}, offset=(0, -32))
+create_static_sprite('CagePeachReal', 445, load_files={'CagePeachReal': 'cage_peach_real.png'}, offset=(-18, -106))
+create_static_sprite('PreSwingVine', 444, load_files={'PreSwingVine': 'swing_vine.png'})
+create_static_sprite('ReplayBlock', 443, load_files={'ReplayBlock': 'replay_block.png'}, offset=(-8, -16))
+create_static_sprite('CagePeachFake', 439, load_files={'CagePeachFake': 'cage_peach_fake.png'}, offset=(-18, -106))
+create_static_sprite('FloatingQBlock', 433, load_files={'FloatingQBlock': 'floating_qblock.png'}, offset=(-6, -6))
+create_static_sprite('Toad', 432, load_files={'Toad': 'toad.png'}, offset=(-1, -16))
+create_static_sprite('MGPanel', 428, load_files={'MGPanel': 'minigame_flip_panel.png'}, offset=(-2, -6))
+create_static_sprite('Kamek', 427, load_files={'Kamek': 'kamek.png'}, offset=(-19, -15))
+create_static_sprite('UnusedGhostDoor', 421, load_files={'GhostDoorU': 'ghost_door.png'})
+create_static_sprite('Bowser', 419, load_files={'Bowser': 'bowser.png'}, offset=(-35, -70))
+create_static_sprite('BanzaiGen', 418, load_files={'BanzaiGen': 'banzai_bill_gen.png'}, offset=(-48, -16))
+create_static_sprite('BetaLarryKoopa', 415, load_files={'LarryKoopaBeta': 'Larry_Koopa_Unused.png'},
+                     offset=(-13, -22.5))
+create_static_sprite('WendyRing', 413, load_files={'WendyRing': 'wendy_ring.png'}, offset=(-4, 4))
+create_static_sprite('SpinyCheep', 395, load_files={'SpinyCheep': 'cheep_spiny.png'}, offset=(-1, -2))
+create_static_sprite('LemmyBall', 394, load_files={'LemmyBall': 'lemmyball.png'}, offset=(-6, 0))
+create_static_sprite('PropellerBlock', 393, load_files={'PropellerBlock': 'propeller_block.png'}, offset=(-1, -6))
+create_static_sprite('Barrel', 388, load_files={'Barrel': 'barrel.png'}, offset=(-4, -8))
+create_static_sprite('POW', 386, load_files={'POW': 'pow.png'})
+create_static_sprite('CloudBlock', 370, load_files={'CloudBlock': 'cloud_block.png'}, offset=(-4, -8))
+create_static_sprite('CubeKinokoLine', 367, load_files={'CubeKinokoP': 'cube_kinoko_p.png'})
+create_static_sprite('RockyWrench', 352, load_files={'RockyWrench': 'rocky_wrench.png'}, offset=(4, -41))
+create_static_sprite('LudwigVonKoopa', 348, load_files={'LudwigVonKoopa': 'Ludwig_Von_Koopa.png'}, offset=(-20, -30))
+create_static_sprite('RoyKoopa', 347, load_files={'RoyKoopa': 'Roy_Koopa.png'}, offset=(-27, -24))
+create_static_sprite('ChainHolder', 345, load_files={'ChainHolder': 'chain_holder.png'}, offset=(0, -12))
+create_static_sprite('MortonKoopa', 344, load_files={'MortonKoopa': 'Morton_Koopa.png'}, offset=(-17, -34))
+create_static_sprite('LemmyKoopa', 340, load_files={'LemmyKoopa': 'Lemmy_Koopa.png'}, offset=(-16, -53))
+create_static_sprite('IggyKoopa', 337, load_files={'IggyKoopa': 'Iggy_Koopa.png'}, offset=(-17, -46))
+create_static_sprite('WendyKoopa', 336, load_files={'WendyKoopa': 'Wendy_Koopa.png'}, offset=(-23, -23))
+create_static_sprite('MegaIcicle', 311, load_files={'MegaIcicle': 'mega_icicle.png'}, offset=(-24, -3))
+create_static_sprite('IceCube', 294, load_files={'IceCube': 'ice_cube.png'})
+create_static_sprite('OldBarrel', 288, load_files={'OldBarrel': 'old_barrel.png'}, offset=(1, -7))
+create_static_sprite('FiveEnemyRaft', 275, load_files={'FiveEnemyRaft': '5_enemy_max_raft.png'}, offset=(0, -8))
+create_static_sprite('IceBro', 272, load_files={'IceBro': 'icebro.png'}, offset=(-5, -23))
+create_static_sprite('WalkingPiranha', 264, load_files={'WalkPiranha': 'walk_piranha.png'}, offset=(-4, -50))
+create_static_sprite('Crow', 134, load_files={'Crow': 'crow.png'}, offset=(-3, -2))
+create_static_sprite('Wiggler', 130, load_files={'Wiggler': 'wiggler.png'}, offset=(0, -12))
+create_static_sprite('SledgeBro', 120, load_files={'SledgeBro': 'sledgebro.png'}, offset=(-8, -28.5))
+create_static_sprite('GiantDryBones', 119, load_files={'GiantDryBones': 'giant_drybones.png'}, offset=(-13, -24))
+create_static_sprite('DryBones', 118, load_files={'DryBones': 'drybones.png'}, offset=(-7, -16))
+create_static_sprite('BlooperBabies', 112, load_files={'BlooperBabies': 'blooper_babies.png'}, offset=(-5, -10))
+create_static_sprite('Blooper', 111, load_files={'Blooper': 'blooper.png'}, offset=(-3, -10))
+create_static_sprite('GiantSpikeBall', 98, load_files={'GiantSpikeBall': 'giant_spike_ball.png'}, offset=(-24, -24))
+create_static_sprite('HammerBro', 95, load_files={'HammerBro': 'hammerbro.png'}, offset=(-4, -21))
+create_static_sprite('BoomerangBro', 94, load_files={'BoomerangBro': 'boomerangbro.png'}, offset=(-8, -22))
+create_static_sprite('BanzaiBillLauncher', 93, load_files={'BanzaiLauncher': 'banzai_launcher.png'},
+                     offset=(-32, -66.7))
+create_static_sprite('FireBro', 80, load_files={'FireBro': 'firebro.png'}, offset=(-8, -22))
+create_static_sprite('ShipKey', 77, load_files={'ShipKey': 'ship_key.png'}, offset=(0, -8))
+create_static_sprite('PipeFiretrapLeft', 72, load_files={'PipeFiretrapLeft': 'firetrap_pipe_left.png'}, offset=(-29, 6))
+create_static_sprite('PipePiranhaUp', 65, load_files={'PipePlantUp': 'piranha_pipe_up.png'}, offset=(2, -32))
+create_static_sprite('PipePiranhaDown', 66, load_files={'PipePlantDown': 'piranha_pipe_down.png'}, offset=(2, 32))
+create_static_sprite('PipePiranhaRight', 67, load_files={'PipePlantRight': 'piranha_pipe_right.png'}, offset=(32, 2))
+create_static_sprite('PipePiranhaLeft', 68, load_files={'PipePlantLeft': 'piranha_pipe_left.png'}, offset=(-32, 2))
+create_static_sprite('PipeFiretrapUp', 69, load_files={'PipeFiretrapUp': 'firetrap_pipe_up.png'}, offset=(-4, -29))
+create_static_sprite('PipeFiretrapDown', 70, load_files={'PipeFiretrapDown': 'firetrap_pipe_down.png'}, offset=(-4, 32))
+create_static_sprite('PipeFiretrapRight', 71, load_files={'PipeFiretrapRight': 'firetrap_pipe_right.png'},
+                     offset=(32, 6))
+create_static_sprite('SpikeBall', 63, load_files={'SpikeBall': 'spike_ball.png'})
+create_static_sprite('LineTiltGirder', 59, load_files={'LineGirder': 'line_tilt_girder.png'}, offset=(-8, -10))
+create_static_sprite('RisingTiltGirder', 56, load_files={'RisingTiltGirder': 'rising_girder.png'}, offset=(-32, -10))
+create_static_sprite('Lakitu', 54, load_files={'Lakitu': 'lakitu.png'}, offset=(-16, -24))
+create_static_sprite('TiltingGirder', 51, load_files={'TiltingGirder': 'tilting_girder.png'}, offset=(0, -18))
+create_static_sprite('Thwomp', 47, load_files={'Thwomp': 'thwomp.png'}, offset=(-6, -6))
+create_static_sprite('GiantThwomp', 48, load_files={'GiantThwomp': 'giant_thwomp.png'}, offset=(-8, -8))
+create_static_sprite('PSwitchBlock', 44, load_files={'PSwitchBlock': 'p_switch_block.png'})
+create_static_sprite('UpsideDownSpiny', 26, load_files={'SpinyU': 'spiny_u.png'})
+create_static_sprite('Goomba', 20, load_files={'Goomba': 'goomba.png'}, offset=(-1, -4))
+create_static_sprite('ParaGoomba', 21, load_files={'ParaGoomba': 'para_goomba.png'}, offset=(1, -10))
+create_static_sprite('HammerBroPlatform', 308, base_sprite='HammerBro')
+
+
+@static_sprite(9, preloaded=True, initial_img='Character1R', offset=Offset.SNAP_TO_Y)
+class CharacterSpawner:
+    def dataChanged(self):
+        direction = self.parent.spritedata[2] & 1
+        character = self.parent.spritedata[5] & 3
+
+        directionstr = 'L' if direction else 'R'
+        self.image = ImageCache[f'Character{character + 1}{directionstr}']
+
+        super().dataChanged()
+
+
+_toad_ballons = {f'ToadHouseBalloon{cache_str}{num}': f'mg_house_balloon_{file_str}{num}.png'
+                 for cache_str, file_str in (('', ''), ('Handle', 'handle_'))
+                 for num in range(4)}
+
+
+create_static_sprite('Unused_ToadHouseBalloon', 411,
+                     initial_img='ToadHouseBalloon0', load_files=_toad_ballons, offset=Offset.IMAGE_CENTER)
+
+@static_sprite(412, load_files=_toad_ballons)
+class ToadHouseBalloon:
+    def dataChanged(self):
+        self.livesNum = (self.parent.spritedata[4] >> 4) & 3
+        self.hasHandle = not ((self.parent.spritedata[5] >> 4) & 1)
+
+        self.image = ImageCache['ToadHouseBalloon' + ('Handle' if self.hasHandle else '') + str(self.livesNum)]
+        self.xOffset = 8 - (self.image.width() / 3)
+
+        super().dataChanged()
+
+        if self.hasHandle:
+            self.yOffset = 12
+        else:
+            self.yOffset = 16 - (self.image.height() / 3)
+
+
+@static_sprite(24,
+               load_files={'BuzzyBeetle': 'buzzy_beetle.png', 'BuzzyBeetleU': 'buzzy_beetle_u.png',
+                           'BuzzyBeetleShell': 'buzzy_beetle_shell.png', 'BuzzyBeetleShellU': 'buzzy_beetle_shell_u.png'})
+class SpriteImage_BuzzyBeetle:
+    def dataChanged(self):
+        orient = self.parent.spritedata[5] & 15
+        if orient == 1:
+            self.image = ImageCache['BuzzyBeetleU']
+            self.yOffset = 0
+        elif orient == 2:
+            self.image = ImageCache['BuzzyBeetleShell']
+            self.yOffset = 2
+        elif orient == 3:
+            self.image = ImageCache['BuzzyBeetleShellU']
+            self.yOffset = 2
+        else:
+            self.image = ImageCache['BuzzyBeetle']
+            self.yOffset = 0
+
+        super().dataChanged()
+
+
+@static_sprite(25, load_files={'Spiny': 'spiny.png', 'SpinyShell': 'spiny_shell.png',
+                                       'SpinyShellU': 'spiny_shell_u.png', 'SpinyBall': 'spiny_ball.png'})
+class SpriteImage_Spiny:
+    def dataChanged(self):
+        orient = self.parent.spritedata[5] & 15
+        if orient == 1:
+            self.image = ImageCache['SpinyBall']
+            self.yOffset = -2
+        elif orient == 2:
+            self.image = ImageCache['SpinyShell']
+            self.yOffset = 1
+        elif orient == 3:
+            self.image = ImageCache['SpinyShellU']
+            self.yOffset = 2
+        else:
+            self.image = ImageCache['Spiny']
+            self.yOffset = 0
+
+        super().dataChanged()
+
+
+@static_sprite(43)
+class SpriteImage_QSwitchBlock:  # 43
+    @staticmethod
+    def loadImages():
+        if 'QSwitchBlock' not in ImageCache:
+            q = SLib.GetImg('q_switch_block.png', True)
+            ImageCache['QSwitchBlock'] = QtGui.QPixmap.fromImage(q)
+            ImageCache['QSwitchBlockU'] = QtGui.QPixmap.fromImage(q.mirrored(True, True))
+
+    def dataChanged(self):
+        upsideDown = self.parent.spritedata[5] & 1
+        if upsideDown:
+            self.image = ImageCache['QSwitchBlockU']
+        else:
+            self.image = ImageCache['QSwitchBlock']
+
+        super().dataChanged()
+
+
+@static_sprite(45, load_files={'ESwitchBlock': 'e_switch_block.png', 'ESwitchBlockU': 'e_switch_block.png'}, alpha=0.1)
+class SpriteImage_ExcSwitchBlock:
+    def dataChanged(self):
+        upsideDown = self.parent.spritedata[5] & 1
+        if upsideDown:
+            self.image = ImageCache['ESwitchBlockU']
+        else:
+            self.image = ImageCache['ESwitchBlock']
+
+        super().dataChanged()
+
 
 
 class SpriteImage_WoodenPlatform(SLib.SpriteImage):  # 23, 31, 50, 103, 106, 122
@@ -121,7 +367,8 @@ class SpriteImage_WoodenPlatform(SLib.SpriteImage):  # 23, 31, 50, 103, 106, 122
             color = 'Bone'
 
         if self.width > 32:
-            painter.drawTiledPixmap(24, 0, int((self.width * 1.5) - 48), int(self.height * 1.5), ImageCache[color + 'PlatformM'])
+            painter.drawTiledPixmap(24, 0, int((self.width * 1.5) - 48), int(self.height * 1.5),
+                                    ImageCache[color + 'PlatformM'])
 
         if self.width == 24:
             # replicate glitch effect foRotControlled by sprite 50
@@ -178,16 +425,6 @@ class SpriteImage_DSStoneBlock(SLib.SpriteImage):  # 27, 28
         painter.drawPixmap(0, bottom_y, ImageCache['DSBlockBottomLeft'])
         painter.drawTiledPixmap(24, bottom_y, middle_width, 8, ImageCache['DSBlockBottom'])
         painter.drawPixmap(right_x, bottom_y, ImageCache['DSBlockBottomRight'])
-
-
-class SpriteImage_StarCoin(SLib.SpriteImage_Static):  # 32, 155, 389
-    def __init__(self, parent, scale=1.5):
-        super().__init__(
-            parent,
-            scale,
-            ImageCache['StarCoin'],
-            (0, 3),
-        )
 
 
 class SpriteImage_OldStoneBlock(SLib.SpriteImage):  # 30, 81, 82, 83, 84, 85, 86
@@ -464,20 +701,6 @@ class SpriteImage_UnusedBlockPlatform(SLib.SpriteImage):  # 97, 107, 132, 160
         painter.drawPixmap(0, 0, pixmap)
 
 
-class SpriteImage_Amp(SLib.SpriteImage_Static):  # 104, 108
-    def __init__(self, parent, scale=1.5):
-        super().__init__(
-            parent,
-            scale,
-            ImageCache['Amp'],
-            (-8, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Amp', 'amp.png')
-
-
 class SpriteImage_SpikedStake(SLib.SpriteImage):  # 137, 140, 141, 142
     def __init__(self, parent, scale=1.5):
         super().__init__(parent, scale)
@@ -592,6 +815,7 @@ class SpriteImage_ScrewMushroom(SLib.SpriteImage):  # 172, 382
         y = 0
         if self.hasBolt:
             painter.drawPixmap(70, 0, ImageCache['Bolt'])
+            print(ImageCache['Bolt'].height())
             y += 24
         painter.drawPixmap(0, y, ImageCache['ScrewShroomT'])
         painter.drawTiledPixmap(76, y + 93, 31, 172, ImageCache['ScrewShroomM'])
@@ -695,15 +919,16 @@ class SpriteImage_GiantBubble(SLib.SpriteImage):  # 205, 226
 
     @staticmethod
     def loadImages():
-        if 'GiantBubble0' in ImageCache: return
         for shape in range(3):
-            ImageCache['GiantBubble%d' % shape] = SLib.GetImg('giant_bubble_%d.png' % shape)
+            SLib.loadIfNotInImageCache('GiantBubble%d' % shape, 'giant_bubble_%d.png' % shape)
 
     def dataChanged(self):
-        super().dataChanged()
+        #super().dataChanged()
 
         self.shape = self.parent.spritedata[4] >> 4
-        direction = self.parent.spritedata[5] & 15
+        #print('Shape', self.shape, [hex(b) for b in self.parent.spritedata.original], self.parent.spritedata[4] >> 4)
+
+        direction = self.parent.spritedata[5] & 0x0F
         distance = (self.parent.spritedata[5] & 0xF0) >> 4
 
         if self.shape > 3:
@@ -730,7 +955,8 @@ class SpriteImage_GiantBubble(SLib.SpriteImage):  # 205, 226
             self.aux[0].setPos((self.width * 0.75) - 12, (-distance * 24))
 
     def paint(self, painter):
-        super().paint(painter)
+        #super().paint(painter)
+        print(super(), painter)
 
         painter.drawPixmap(0, 0, ImageCache['GiantBubble%d' % self.shape])
 
@@ -796,15 +1022,6 @@ class SpriteImage_Block(SLib.SpriteImage):  # 207, 208, 209, 221, 255, 256, 402,
         if self.tilenum < len(SLib.Tiles):
             painter.drawPixmap(0, 0, SLib.GetTile(self.tilenum))
         painter.drawPixmap(0, 0, self.image)
-
-
-class SpriteImage_SpecialCoin(SLib.SpriteImage_Static):  # 253, 371, 390
-    def __init__(self, parent, scale=1.5):
-        super().__init__(
-            parent,
-            scale,
-            ImageCache['SpecialCoin'],
-        )
 
 
 class SpriteImage_Pipe(SLib.SpriteImage):  # 254, 339, 353, 377, 378, 379, 380, 450
@@ -958,19 +1175,6 @@ class SpriteImage_PipeStationary(SpriteImage_Pipe):  # 377, 378, 379, 380, 450
         super().dataChanged()
 
 
-class SpriteImage_UnusedGiantDoor(SLib.SpriteImage_Static):  # 319, 320
-    def __init__(self, parent, scale=1.5):
-        super().__init__(
-            parent,
-            scale,
-            ImageCache['UnusedGiantDoor'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('UnusedGiantDoor', 'unused_giant_door.png')
-
-
 class SpriteImage_RollingHillWithPipe(SLib.SpriteImage):  # 355, 360
     def __init__(self, parent, scale=1.5):
         super().__init__(parent, scale)
@@ -980,7 +1184,7 @@ class SpriteImage_RollingHillWithPipe(SLib.SpriteImage):  # 355, 360
 class SpriteImage_LongSpikedStake(SLib.SpriteImage):  # 398, 400
     def __init__(self, parent, scale=1.5):
         super().__init__(parent, scale)
-        self.parent.setZValue(24999) # to see sprites behind it easily
+        self.parent.setZValue(24999)  # to see sprites behind it easily
         self.spritebox.shown = False
 
         # 55 mid sections + an end section = 2021
@@ -1032,7 +1236,7 @@ class SpriteImage_LongSpikedStake(SLib.SpriteImage):  # 398, 400
 class SpriteImage_MassiveSpikedStake(SLib.SpriteImage):  # 401, 404
     def __init__(self, parent, scale=1.5):
         super().__init__(parent, scale)
-        self.parent.setZValue(24999) # to see sprites behind it easily
+        self.parent.setZValue(24999)  # to see sprites behind it easily
         self.spritebox.shown = False
 
         self.SpikeLength = ((72 * 40) + 136) / 1.5
@@ -1085,30 +1289,6 @@ class SpriteImage_MassiveSpikedStake(SLib.SpriteImage):  # 401, 404
         self.aux[2].alpha = 0.9
 
 
-class SpriteImage_ToadHouseBalloon(SLib.SpriteImage_StaticMultiple):  # 411, 412
-    def __init__(self, parent, scale=1.5):
-        super().__init__(parent, scale)
-        self.hasHandle = False
-        self.livesNum = 0
-        # self.livesnum: 0 = 1 life, 1 = 2 lives, etc (1 + value)
-
-    @staticmethod
-    def loadImages():
-        if 'ToadHouseBalloon0' in ImageCache: return
-        for handleCacheStr, handleFileStr in (('', ''), ('Handle', 'handle_')):
-            for num in range(4):
-                ImageCache['ToadHouseBalloon' + handleCacheStr + str(num)] = \
-                    SLib.GetImg('mg_house_balloon_' + handleFileStr + str(num) + '.png')
-
-    def dataChanged(self):
-
-        self.image = ImageCache['ToadHouseBalloon' + ('Handle' if self.hasHandle else '') + str(self.livesNum)]
-
-        self.xOffset = 8 - (self.image.width() / 3)
-
-        super().dataChanged()
-
-
 # ---- High-Level Classes ----
 
 class SpriteImage_MeasureJump(SLib.SpriteImage):
@@ -1157,51 +1337,6 @@ class SpriteImage_MeasureJump(SLib.SpriteImage):
             self.aux[0].setPos(0, 0)
 
 
-class SpriteImage_CharacterSpawner(SLib.SpriteImage_StaticMultiple):  # 9
-    def dataChanged(self):
-        direction = self.parent.spritedata[2] & 1
-        character = self.parent.spritedata[5] & 3
-
-        directionstr = 'L' if direction else 'R'
-
-        self.image = ImageCache['Character' + str(character + 1) + directionstr]
-
-        self.offset = (
-            -(self.image.width() / 3),
-            -(self.image.height() / 1.5),
-        )
-
-        super().dataChanged()
-
-
-class SpriteImage_Goomba(SLib.SpriteImage_Static):  # 20
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Goomba'],
-            (-1, -4),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Goomba', 'goomba.png')
-
-
-class SpriteImage_ParaGoomba(SLib.SpriteImage_Static):  # 21
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ParaGoomba'],
-            (1, -10),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ParaGoomba', 'para_goomba.png')
-
-
 class SpriteImage_HorzMovingPlatform(SpriteImage_WoodenPlatform):  # 23
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -1232,73 +1367,6 @@ class SpriteImage_HorzMovingPlatform(SpriteImage_WoodenPlatform):  # 23
         self.color = (self.parent.spritedata[3] >> 4) & 1
 
         self.aux[0].update()
-
-
-class SpriteImage_BuzzyBeetle(SLib.SpriteImage_StaticMultiple):  # 24
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BuzzyBeetle', 'buzzy_beetle.png')
-        SLib.loadIfNotInImageCache('BuzzyBeetleU', 'buzzy_beetle_u.png')
-        SLib.loadIfNotInImageCache('BuzzyBeetleShell', 'buzzy_beetle_shell.png')
-        SLib.loadIfNotInImageCache('BuzzyBeetleShellU', 'buzzy_beetle_shell_u.png')
-
-    def dataChanged(self):
-
-        orient = self.parent.spritedata[5] & 15
-        if orient == 1:
-            self.image = ImageCache['BuzzyBeetleU']
-            self.yOffset = 0
-        elif orient == 2:
-            self.image = ImageCache['BuzzyBeetleShell']
-            self.yOffset = 2
-        elif orient == 3:
-            self.image = ImageCache['BuzzyBeetleShellU']
-            self.yOffset = 2
-        else:
-            self.image = ImageCache['BuzzyBeetle']
-            self.yOffset = 0
-
-        super().dataChanged()
-
-
-class SpriteImage_Spiny(SLib.SpriteImage_StaticMultiple):  # 25
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Spiny', 'spiny.png')
-        SLib.loadIfNotInImageCache('SpinyShell', 'spiny_shell.png')
-        SLib.loadIfNotInImageCache('SpinyShellU', 'spiny_shell_u.png')
-        SLib.loadIfNotInImageCache('SpinyBall', 'spiny_ball.png')
-
-    def dataChanged(self):
-
-        orient = self.parent.spritedata[5] & 15
-        if orient == 1:
-            self.image = ImageCache['SpinyBall']
-            self.yOffset = -2
-        elif orient == 2:
-            self.image = ImageCache['SpinyShell']
-            self.yOffset = 1
-        elif orient == 3:
-            self.image = ImageCache['SpinyShellU']
-            self.yOffset = 2
-        else:
-            self.image = ImageCache['Spiny']
-            self.yOffset = 0
-
-        super().dataChanged()
-
-
-class SpriteImage_UpsideDownSpiny(SLib.SpriteImage_Static):  # 26
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SpinyU'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SpinyU', 'spiny_u.png')
 
 
 class SpriteImage_DSStoneBlock_Vert(SpriteImage_DSStoneBlock):  # 27
@@ -1391,10 +1459,6 @@ class SpriteImage_VertMovingPlatform(SpriteImage_WoodenPlatform):  # 31
         self.aux[0].update()
 
 
-class SpriteImage_StarCoinRegular(SpriteImage_StarCoin):  # 32
-    pass
-
-
 class SpriteImage_QSwitch(common.SpriteImage_Switch):  # 40
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -1424,58 +1488,6 @@ class SpriteImage_ExcSwitch(common.SpriteImage_Switch):  # 42
         self.offset = (0, 0)
         super().dataChanged()
 
-
-class SpriteImage_QSwitchBlock(SLib.SpriteImage_StaticMultiple):  # 43
-    @staticmethod
-    def loadImages():
-        if 'QSwitchBlock' not in ImageCache:
-            q = SLib.GetImg('q_switch_block.png', True)
-            ImageCache['QSwitchBlock'] = QtGui.QPixmap.fromImage(q)
-            ImageCache['QSwitchBlockU'] = QtGui.QPixmap.fromImage(q.mirrored(True, True))
-
-    def dataChanged(self):
-        upsideDown = self.parent.spritedata[5] & 1
-
-        if upsideDown:
-            self.image = ImageCache['QSwitchBlockU']
-        else:
-            self.image = ImageCache['QSwitchBlock']
-
-        super().dataChanged()
-
-
-class SpriteImage_PSwitchBlock(SLib.SpriteImage_Static):  # 44
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PSwitchBlock'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PSwitchBlock', 'p_switch_block.png')
-
-
-class SpriteImage_ExcSwitchBlock(SLib.SpriteImage_StaticMultiple):  # 45
-    @staticmethod
-    def loadImages():
-        if 'ESwitchBlock' not in ImageCache:
-            e = SLib.GetImg('e_switch_block.png', True)
-            ImageCache['ESwitchBlock'] = QtGui.QPixmap.fromImage(e)
-            ImageCache['ESwitchBlockU'] = QtGui.QPixmap.fromImage(e.mirrored(True, True))
-
-    def dataChanged(self):
-        upsideDown = self.parent.spritedata[5] & 1
-
-        if upsideDown:
-            self.image = ImageCache['ESwitchBlockU']
-        else:
-            self.image = ImageCache['ESwitchBlock']
-
-        super().dataChanged()
-
-
 class SpriteImage_Podoboo(SLib.SpriteImage):  # 46
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -1491,34 +1503,6 @@ class SpriteImage_Podoboo(SLib.SpriteImage):  # 46
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('Podoboo0', 'podoboo.png')
-
-
-class SpriteImage_Thwomp(SLib.SpriteImage_Static):  # 47
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Thwomp'],
-            (-6, -6),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Thwomp', 'thwomp.png')
-
-
-class SpriteImage_GiantThwomp(SLib.SpriteImage_Static):  # 48
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GiantThwomp'],
-            (-8, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GiantThwomp', 'giant_thwomp.png')
 
 
 class SpriteImage_UnusedSeesaw(SLib.SpriteImage):  # 49
@@ -1614,20 +1598,6 @@ class SpriteImage_FallingPlatform(SpriteImage_WoodenPlatform):  # 50
             self.color = 0
 
 
-class SpriteImage_TiltingGirder(SLib.SpriteImage_Static):  # 51
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['TiltingGirder'],
-            (0, -18),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('TiltingGirder', 'tilting_girder.png')
-
-
 class SpriteImage_UnusedRotPlatforms(SLib.SpriteImage):  # 52
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -1637,10 +1607,10 @@ class SpriteImage_UnusedRotPlatforms(SLib.SpriteImage):  # 52
             img.image = ImageCache["UnusedRotPlatform"]
             self.aux.append(img)
 
-        self.aux[0].setPos(-60, -144) # top
-        self.aux[1].setPos(-60, 144) # bottom
-        self.aux[2].setPos(-204, 0) # left
-        self.aux[3].setPos(84, 0) # right
+        self.aux[0].setPos(-60, -144)  # top
+        self.aux[1].setPos(-60, 144)  # bottom
+        self.aux[2].setPos(-204, 0)  # left
+        self.aux[3].setPos(84, 0)  # right
 
     @staticmethod
     def loadImages():
@@ -1696,20 +1666,6 @@ class SpriteImage_Quicksand(SpriteImage_LiquidOrFog):  # 53
         super().positionChanged()
 
 
-class SpriteImage_Lakitu(SLib.SpriteImage_Static):  # 54
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Lakitu'],
-            (-16, -24),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Lakitu', 'lakitu.png')
-
-
 class SpriteImage_UnusedRisingSeesaw(SLib.SpriteImage_Static):  # 55
     def __init__(self, parent):
         super().__init__(
@@ -1724,20 +1680,6 @@ class SpriteImage_UnusedRisingSeesaw(SLib.SpriteImage_Static):  # 55
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('UnusedPlatformDark', 'unused_platform_dark.png')
-
-
-class SpriteImage_RisingTiltGirder(SLib.SpriteImage_Static):  # 56
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['RisingTiltGirder'],
-            (-32, -10),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('RisingTiltGirder', 'rising_girder.png')
 
 
 class SpriteImage_KoopaTroopa(SLib.SpriteImage_StaticMultiple):  # 57
@@ -1827,20 +1769,6 @@ class SpriteImage_KoopaParatroopa(SLib.SpriteImage_StaticMultiple):  # 58
             self.aux[0].setSize(0, 0)
 
         super().dataChanged()
-
-
-class SpriteImage_LineTiltGirder(SLib.SpriteImage_Static):  # 59
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LineGirder'],
-            (-8, -10),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LineGirder', 'line_tilt_girder.png')
 
 
 class SpriteImage_SpikeTop(SLib.SpriteImage_StaticMultiple):  # 60
@@ -1941,19 +1869,6 @@ class SpriteImage_SpinningFirebar(SLib.SpriteImage):  # 62
         painter.drawPixmap(0, 0, self.image)
 
 
-class SpriteImage_SpikeBall(SLib.SpriteImage_Static):  # 63
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SpikeBall'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SpikeBall', 'spike_ball.png')
-
-
 class SpriteImage_OutdoorsFog(SpriteImage_LiquidOrFog):  # 64
     def __init__(self, parent):
         super().__init__(parent)
@@ -1971,118 +1886,6 @@ class SpriteImage_OutdoorsFog(SpriteImage_LiquidOrFog):  # 64
     def positionChanged(self):
         self.top = self.parent.objy
         super().positionChanged()
-
-
-class SpriteImage_PipePiranhaUp(SLib.SpriteImage_Static):  # 65
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipePlantUp'],
-            (2, -32),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipePlantUp', 'piranha_pipe_up.png')
-
-
-class SpriteImage_PipePiranhaDown(SLib.SpriteImage_Static):  # 66
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipePlantDown'],
-            (2, 32),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipePlantDown', 'piranha_pipe_down.png')
-
-
-class SpriteImage_PipePiranhaRight(SLib.SpriteImage_Static):  # 67
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipePlantRight'],
-            (32, 2),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipePlantRight', 'piranha_pipe_right.png')
-
-
-class SpriteImage_PipePiranhaLeft(SLib.SpriteImage_Static):  # 68
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipePlantLeft'],
-            (-32, 2),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipePlantLeft', 'piranha_pipe_left.png')
-
-
-class SpriteImage_PipeFiretrapUp(SLib.SpriteImage_Static):  # 69
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipeFiretrapUp'],
-            (-4, -29),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipeFiretrapUp', 'firetrap_pipe_up.png')
-
-
-class SpriteImage_PipeFiretrapDown(SLib.SpriteImage_Static):  # 70
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipeFiretrapDown'],
-            (-4, 32),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipeFiretrapDown', 'firetrap_pipe_down.png')
-
-
-class SpriteImage_PipeFiretrapRight(SLib.SpriteImage_Static):  # 71
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipeFiretrapRight'],
-            (32, 6),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipeFiretrapRight', 'firetrap_pipe_right.png')
-
-
-class SpriteImage_PipeFiretrapLeft(SLib.SpriteImage_Static):  # 72
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PipeFiretrapLeft'],
-            (-29, 6),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PipeFiretrapLeft', 'firetrap_pipe_left.png')
 
 
 class SpriteImage_GroundPiranha(SLib.SpriteImage_StaticMultiple):  # 73
@@ -2185,20 +1988,6 @@ class SpriteImage_BigGroundFiretrap(SLib.SpriteImage_StaticMultiple):  # 76
         super().dataChanged()
 
 
-class SpriteImage_ShipKey(SLib.SpriteImage_Static):  # 77
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ShipKey'],
-            (0, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ShipKey', 'ship_key.png')
-
-
 class SpriteImage_CloudTrampoline(SLib.SpriteImage_StaticMultiple):  # 78
     def __init__(self, parent):
         super().__init__(
@@ -2222,20 +2011,6 @@ class SpriteImage_CloudTrampoline(SLib.SpriteImage_StaticMultiple):  # 78
             self.image = ImageCache['CloudTrBig']
 
         super().dataChanged()
-
-
-class SpriteImage_FireBro(SLib.SpriteImage_Static):  # 80
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FireBro'],
-            (-8, -22),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FireBro', 'firebro.png')
 
 
 class SpriteImage_OldStoneBlock_SpikesLeft(SpriteImage_OldStoneBlock):  # 81
@@ -2320,48 +2095,6 @@ class SpriteImage_BulletBillLauncher(SLib.SpriteImage):  # 92
         painter.drawTiledPixmap(0, 48, 24, int(self.height * 1.5 - 48), ImageCache['BBLauncherM'])
 
 
-class SpriteImage_BanzaiBillLauncher(SLib.SpriteImage_Static):  # 93
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['BanzaiLauncher'],
-            (-32, -66.7),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BanzaiLauncher', 'banzai_launcher.png')
-
-
-class SpriteImage_BoomerangBro(SLib.SpriteImage_Static):  # 94
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['BoomerangBro'],
-            (-8, -22),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BoomerangBro', 'boomerangbro.png')
-
-
-class SpriteImage_HammerBroNormal(SLib.SpriteImage_Static):  # 95
-    def __init__(self, parent, scale=1.5):
-        super().__init__(
-            parent,
-            scale,
-            ImageCache['HammerBro'],
-            (-4, -21)
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('HammerBro', 'hammerbro.png')
-
-
 class SpriteImage_RotationControllerSwaying(SLib.SpriteImage):  # 96
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -2405,20 +2138,6 @@ class SpriteImage_RotationControlledSolidBetaPlatform(SpriteImage_UnusedBlockPla
         super().dataChanged()
 
 
-class SpriteImage_GiantSpikeBall(SLib.SpriteImage_Static):  # 98
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GiantSpikeBall'],
-            (-24, -24),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GiantSpikeBall', 'giant_spike_ball.png')
-
-
 class SpriteImage_PipeEnemyGenerator(SLib.SpriteImage):  # 99
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -2436,48 +2155,6 @@ class SpriteImage_PipeEnemyGenerator(SLib.SpriteImage):  # 99
         self.yOffset = 0
         if direction in (2, 3):
             self.yOffset = -16
-
-
-class SpriteImage_Swooper(SLib.SpriteImage_Static):  # 100
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Swooper'],
-            (2, 0),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Swooper', 'swooper.png')
-
-
-class SpriteImage_Bobomb(SLib.SpriteImage_Static):  # 101
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Bobomb'],
-            (-8, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Bobomb', 'bobomb.png')
-
-
-class SpriteImage_Broozer(SLib.SpriteImage_Static):  # 102
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Broozer'],
-            (-9, -17),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Broozer', 'broozer.png')
 
 
 class SpriteImage_PlatformGenerator(SpriteImage_WoodenPlatform):  # 103
@@ -2503,10 +2180,6 @@ class SpriteImage_PlatformGenerator(SpriteImage_WoodenPlatform):  # 103
             self.xOffset = 0
 
         self.color = 0
-
-
-class SpriteImage_AmpNormal(SpriteImage_Amp):  # 104
-    pass
 
 
 class SpriteImage_Pokey(SLib.SpriteImage):  # 105
@@ -2578,10 +2251,6 @@ class SpriteImage_RotationControlledPassBetaPlatform(SpriteImage_UnusedBlockPlat
         self.height = height * 16
 
         super().dataChanged()
-
-
-class SpriteImage_AmpLine(SpriteImage_Amp):  # 108
-    pass
 
 
 class SpriteImage_ChainBall(SLib.SpriteImage_StaticMultiple):  # 109
@@ -2682,34 +2351,6 @@ class SpriteImage_Sunlight(SLib.SpriteImage):  # 110
         except RuntimeError:
             # happens if the parent was deleted
             pass
-
-
-class SpriteImage_Blooper(SLib.SpriteImage_Static):  # 111
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Blooper'],
-            (-3, -10),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Blooper', 'blooper.png')
-
-
-class SpriteImage_BlooperBabies(SLib.SpriteImage_Static):  # 112
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['BlooperBabies'],
-            (-5, -10),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BlooperBabies', 'blooper_babies.png')
 
 
 class SpriteImage_Flagpole(SLib.SpriteImage):  # 113
@@ -2936,48 +2577,6 @@ class SpriteImage_PulseFlameCannon(SLib.SpriteImage_StaticMultiple):  # 117
         super().dataChanged()
 
 
-class SpriteImage_DryBones(SLib.SpriteImage_Static):  # 118
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['DryBones'],
-            (-7, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('DryBones', 'drybones.png')
-
-
-class SpriteImage_GiantDryBones(SLib.SpriteImage_Static):  # 119
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GiantDryBones'],
-            (-13, -24),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GiantDryBones', 'giant_drybones.png')
-
-
-class SpriteImage_SledgeBro(SLib.SpriteImage_Static):  # 120
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SledgeBro'],
-            (-8, -28.5),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SledgeBro', 'sledgebro.png')
-
-
 class SpriteImage_OneWayPlatform(SpriteImage_WoodenPlatform):  # 122
     def dataChanged(self):
         super().dataChanged()
@@ -3065,36 +2664,6 @@ class SpriteImage_FenceKoopaVert(SLib.SpriteImage_StaticMultiple):  # 126
         super().dataChanged()
 
 
-class SpriteImage_FlipFence(SLib.SpriteImage_Static):  # 127
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FlipFence'],
-            (-4, -8),
-        )
-        parent.setZValue(24999)
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FlipFence', 'flipfence.png')
-
-
-class SpriteImage_FlipFenceLong(SLib.SpriteImage_Static):  # 128
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FlipFenceLong'],
-            (6, 0),
-        )
-        parent.setZValue(24999)
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FlipFenceLong', 'flipfence_long.png')
-
-
 class SpriteImage_4Spinner(SLib.SpriteImage_Static):  # 129
     def __init__(self, parent):
         super().__init__(
@@ -3111,20 +2680,6 @@ class SpriteImage_4Spinner(SLib.SpriteImage_Static):  # 129
     def dataChanged(self):
         super().dataChanged()
         self.alpha = 0.6 if (self.parent.spritedata[2] >> 4) & 1 else 1
-
-
-class SpriteImage_Wiggler(SLib.SpriteImage_Static):  # 130
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Wiggler'],
-            (0, -12),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Wiggler', 'wiggler.png')
 
 
 class SpriteImage_Boo(SLib.SpriteImage):  # 131
@@ -3170,20 +2725,6 @@ class SpriteImage_StalagmitePlatform(SLib.SpriteImage):  # 133
     def paint(self, painter):
         super().paint(painter)
         painter.drawPixmap(0, 0, self.image)
-
-
-class SpriteImage_Crow(SLib.SpriteImage_Static):  # 134
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Crow'],
-            (-3, -2),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Crow', 'crow.png')
 
 
 class SpriteImage_HangingPlatform(SLib.SpriteImage_Static):  # 135
@@ -3388,21 +2929,12 @@ class SpriteImage_Arrow(SLib.SpriteImage_StaticMultiple):  # 143
         super().dataChanged()
 
 
-class SpriteImage_RedCoin(SLib.SpriteImage_Static):  # 144
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['RedCoin'],
-        )
-
-
 class SpriteImage_FloatingBarrel(SLib.SpriteImage_Static):  # 145
     def __init__(self, parent):
         super().__init__(
             parent,
             1.5,
-            offset = (-16, -9)
+            offset=(-16, -9)
         )
 
         img = ImageCache['FloatingBarrel']
@@ -3416,7 +2948,7 @@ class SpriteImage_FloatingBarrel(SLib.SpriteImage_Static):  # 145
         path.lineTo(QtCore.QPointF(self.width * 1.5, 0))
 
         self.aux.append(SLib.AuxiliaryPainterPath(parent, path, img.width(),
-            SLib.OutlinePen.width(), 0, 36))
+                                                  SLib.OutlinePen.width(), 0, 36))
 
     @staticmethod
     def loadImages():
@@ -3425,20 +2957,6 @@ class SpriteImage_FloatingBarrel(SLib.SpriteImage_Static):  # 145
     def dataChanged(self):
         # Don't let SLib.SpriteImage_Static reset size
         SLib.SpriteImage.dataChanged(self)
-
-
-class SpriteImage_ChainChomp(SLib.SpriteImage_Static):  # 146
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ChainChomp'],
-            (-90, -32),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ChainChomp', 'chain_chomp.png')
 
 
 class SpriteImage_Coin(SLib.SpriteImage_StaticMultiple):  # 147
@@ -3502,20 +3020,6 @@ class SpriteImage_RotationControllerSpinning(SLib.SpriteImage):  # 149
         self.parent.setZValue(100000)
 
 
-class SpriteImage_Porcupuffer(SLib.SpriteImage_Static):  # 151
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Porcupuffer'],
-            (-16, -18),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Porcupuffer', 'porcu_puffer.png')
-
-
 class SpriteImage_QSwitchUnused(common.SpriteImage_Switch):  # 153
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -3524,10 +3028,6 @@ class SpriteImage_QSwitchUnused(common.SpriteImage_Switch):  # 153
     def dataChanged(self):
         self.offset = (0, 0)
         super().dataChanged()
-
-
-class SpriteImage_StarCoinLineControlled(SpriteImage_StarCoin):  # 155
-    pass
 
 
 class SpriteImage_RedCoinRing(SLib.SpriteImage):  # 156
@@ -3690,52 +3190,10 @@ class SpriteImage_BlockTrain(SLib.SpriteImage):  # 166
         painter.drawPixmap(int((self.width * 1.5) - 24), 0, endpiece)
 
 
-class SpriteImage_ChestnutGoomba(SLib.SpriteImage_Static):  # 170
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ChestnutGoomba'],
-            (-6, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ChestnutGoomba', 'chestnut_goomba.png')
-
-
-class SpriteImage_PowerupBubble(SLib.SpriteImage_Static):  # 171
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MushroomBubble'],
-            (-8, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MushroomBubble', 'powerup_bubble.png')
-
-
 class SpriteImage_ScrewMushroomWithBolt(SpriteImage_ScrewMushroom):  # 172
     def __init__(self, parent):
         super().__init__(parent, 1.5)
         self.hasBolt = True
-
-
-class SpriteImage_GiantFloatingLog(SLib.SpriteImage_Static):  # 173
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GiantFloatingLog'],
-            (-152, -32),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GiantFloatingLog', 'giant_floating_log.png')
 
 
 class SpriteImage_OneWayGate(SLib.SpriteImage_StaticMultiple):  # 174
@@ -3829,34 +3287,6 @@ class SpriteImage_FlyingQBlock(SLib.SpriteImage):  # 175
         painter.drawPixmap(18, 23, ImageCache['BlockContents'][content])
 
 
-class SpriteImage_RouletteBlock(SLib.SpriteImage_Static):  # 176
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['RouletteBlock'],
-            (-4, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('RouletteBlock', 'roulette.png')
-
-
-class SpriteImage_FireChomp(SLib.SpriteImage_Static):  # 177
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FireChomp'],
-            (-2, -20),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FireChomp', 'fire_chomp.png')
-
-
 class SpriteImage_ScalePlatform(SLib.SpriteImage):  # 178
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -3944,93 +3374,10 @@ class SpriteImage_SpecialExit(SLib.SpriteImage):  # 179
         self.aux[0].setSize(w * 24, h * 24)
 
 
-class SpriteImage_CheepChomp(SLib.SpriteImage_Static):  # 180
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['CheepChomp'],
-            (-32, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('CheepChomp', 'cheep_chomp.png')
-
-
 class SpriteImage_EventDoor(SpriteImage_Door):  # 182
     def __init__(self, parent):
         super().__init__(parent, 1.5)
         self.alpha = 0.5
-
-
-class SpriteImage_ToadBalloon(SLib.SpriteImage_Static):  # 185
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ToadBalloon'],
-            (-4, -4),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ToadBalloon', 'toad_balloon.png')
-
-
-class SpriteImage_PlayerBlock(SLib.SpriteImage_Static):  # 187
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PlayerBlock'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PlayerBlock', 'player_block.png')
-
-
-class SpriteImage_MidwayFlag(SLib.SpriteImage_Static):  # 188
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MidwayFlag'],
-            (0, -38),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MidwayFlag', 'midway_flag.png')
-
-
-class SpriteImage_LarryKoopa(SLib.SpriteImage_Static):  # 189
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LarryKoopa'],
-            (-17, -33),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LarryKoopa', 'Larry_Koopa.png')
-
-
-class SpriteImage_TiltingGirderUnused(SLib.SpriteImage_Static):  # 190
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['TiltingGirder'],
-            (0, -18),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('TiltingGirder', 'tilting_girder.png')
 
 
 class SpriteImage_TileEvent(common.SpriteImage_TileEvent):  # 191
@@ -4110,6 +3457,7 @@ class SpriteImage_Urchin(SLib.SpriteImage_Static):  # 193
             self.aux[0].direction = SLib.AuxiliaryTrackObject.Vertical
             self.aux[0].setSize(16, distance + 8)
             self.aux[0].setPos(self.width * 0.75 - 12, (self.height - distance) * 0.75 - 8)
+
 
 class SpriteImage_MegaUrchin(SLib.SpriteImage_Static):  # 194
     def __init__(self, parent):
@@ -4289,34 +3637,6 @@ class SpriteImage_GiantGoomba(SLib.SpriteImage_Static):  # 198
         SLib.loadIfNotInImageCache('GiantGoomba', 'giant_goomba.png')
 
 
-class SpriteImage_MegaGoomba(SLib.SpriteImage_Static):  # 199
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MegaGoomba'],
-            (-11, -37),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MegaGoomba', 'mega_goomba.png')
-
-
-class SpriteImage_Microgoomba(SLib.SpriteImage_Static):  # 200
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Microgoomba'],
-            (4, 8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Microgoomba', 'microgoomba.png')
-
-
 class SpriteImage_Icicle(SLib.SpriteImage_StaticMultiple):  # 201
     @staticmethod
     def loadImages():
@@ -4332,34 +3652,6 @@ class SpriteImage_Icicle(SLib.SpriteImage_StaticMultiple):  # 201
             self.image = ImageCache['IcicleLargeS']
 
         super().dataChanged()
-
-
-class SpriteImage_MGCannon(SLib.SpriteImage_Static):  # 202
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MGCannon'],
-            (-12, -42),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MGCannon', 'mg_cannon.png')
-
-
-class SpriteImage_MGChest(SLib.SpriteImage_Static):  # 203
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MGChest'],
-            (-12, -11),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MGChest', 'mg_chest.png')
 
 
 class SpriteImage_GiantBubbleNormal(SpriteImage_GiantBubble):  # 205
@@ -4443,20 +3735,6 @@ class SpriteImage_RollingHill(SLib.SpriteImage):  # 212
         self.aux[0].update()
 
 
-class SpriteImage_FreefallPlatform(SLib.SpriteImage_Static):  # 214
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FreefallGH'],
-        )
-        self.parent.setZValue(24999)
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FreefallGH', 'freefall_gh_platform.png')
-
-
 class SpriteImage_Poison(SpriteImage_LiquidOrFog):  # 216
     def __init__(self, parent):
         super().__init__(parent)
@@ -4511,19 +3789,6 @@ class SpriteImage_InvisibleBlock(SpriteImage_Block):  # 221
         self.tilenum = 0x200 * 4
 
 
-class SpriteImage_ConveyorSpike(SLib.SpriteImage_Static):  # 222
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SpikeU'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SpikeU', 'spike_up.png')
-
-
 class SpriteImage_SpringBlock(SLib.SpriteImage_StaticMultiple):  # 223
     @staticmethod
     def loadImages():
@@ -4556,10 +3821,6 @@ class SpriteImage_JumboRay(SLib.SpriteImage_StaticMultiple):  # 224
             self.image = ImageCache['JumboRayR']
 
         super().dataChanged()
-
-
-class SpriteImage_FloatingCoin(SpriteImage_SpecialCoin):  # 225
-    pass
 
 
 class SpriteImage_GiantBubbleUnused(SpriteImage_GiantBubble):  # 226
@@ -4688,7 +3949,7 @@ class SpriteImage_ExtendShroom(SLib.SpriteImage):  # 228
     def paint(self, painter):
         super().paint(painter)
 
-        if self.start == 0: # contracted, so paint indicator
+        if self.start == 0:  # contracted, so paint indicator
             painter.save()
             painter.setOpacity(0.5)
             painter.drawPixmap(0, 0, self.indicator)
@@ -4705,35 +3966,6 @@ class SpriteImage_ExtendShroom(SLib.SpriteImage):  # 228
             int((self.height * 1.5) - 48),
             ImageCache['ExtendShroomStem'],
         )
-
-
-class SpriteImage_SandPillar(SLib.SpriteImage_Static):  # 229
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SandPillar'],
-            (-33, -150),
-        )
-        self.alpha = 0.65
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SandPillar', 'sand_pillar.png')
-
-
-class SpriteImage_Bramball(SLib.SpriteImage_Static):  # 230
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Bramball'],
-            (-32, -48),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Bramball', 'bramball.png')
 
 
 class SpriteImage_WiggleShroom(SLib.SpriteImage):  # 231
@@ -4756,7 +3988,7 @@ class SpriteImage_WiggleShroom(SLib.SpriteImage):  # 231
         width = (self.parent.spritedata[4] & 0xF0) >> 4
         long = (self.parent.spritedata[3] >> 2) & 1
         extends = (self.parent.spritedata[3] >> 5) & 1
-        distance = self.parent.spritedata[3] & 3 # this is also the stem length
+        distance = self.parent.spritedata[3] & 3  # this is also the stem length
 
         self.xOffset = -(width * 8) - 20
         self.width = (width * 16) + 56
@@ -4786,20 +4018,6 @@ class SpriteImage_WiggleShroom(SLib.SpriteImage):  # 231
         painter.drawTiledPixmap(int((xsize / 2) - 12), 24, 24, int((self.height * 1.5) - 24), self.wigglestem)
 
 
-class SpriteImage_MechaKoopa(SLib.SpriteImage_Static):  # 232
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MechaKoopa'],
-            (-8, -14),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MechaKoopa', 'mechakoopa.png')
-
-
 class SpriteImage_Bulber(SLib.SpriteImage):  # 233
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -4814,66 +4032,6 @@ class SpriteImage_Bulber(SLib.SpriteImage):  # 233
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('Bulber', 'bulber.png')
-
-
-class SpriteImage_PCoin(SLib.SpriteImage_Static):  # 237
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PCoin'],
-        )
-
-
-class SpriteImage_Foo(SLib.SpriteImage_Static):  # 238
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Foo'],
-            (-8, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Foo', 'foo.png')
-
-
-class SpriteImage_GiantWiggler(SLib.SpriteImage_Static):  # 240
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GiantWiggler'],
-            (-24, -64),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GiantWiggler', 'giant_wiggler.png')
-
-
-class SpriteImage_FallingLedgeBar(SLib.SpriteImage_Static):  # 242
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FallingLedgeBar'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FallingLedgeBar', 'falling_ledge_bar.png')
-
-
-class SpriteImage_EventDeactivBlock(SLib.SpriteImage_Static):  # 252
-    def __init__(self, parent):
-        super().__init__(parent, 1.5)
-        self.image = SLib.GetTile(49)  # ? block
-
-
-class SpriteImage_RotControlledCoin(SpriteImage_SpecialCoin):  # 253
-    pass
 
 
 class SpriteImage_RotControlledPipe(SpriteImage_Pipe):  # 254
@@ -5021,20 +4179,6 @@ class SpriteImage_WaterPiranha(SLib.SpriteImage_Static):  # 263
     def loadImages():
         SLib.loadIfNotInImageCache('WaterPiranhaBody', 'water_piranha_body.png')
         SLib.loadIfNotInImageCache('WaterPiranhaBall', 'water_piranha_ball.png')
-
-
-class SpriteImage_WalkingPiranha(SLib.SpriteImage_Static):  # 264
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['WalkPiranha'],
-            (-4, -50),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('WalkPiranha', 'walk_piranha.png')
 
 
 class SpriteImage_FallingIcicle(SLib.SpriteImage_StaticMultiple):  # 265
@@ -5192,20 +4336,6 @@ class SpriteImage_ScaredyRat(SLib.SpriteImage):  # 271
         painter.drawTiledPixmap(0, 0, int(self.width * 1.5), 24, rat)
 
 
-class SpriteImage_IceBro(SLib.SpriteImage_Static):  # 272
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['IceBro'],
-            (-5, -23),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('IceBro', 'icebro.png')
-
-
 class SpriteImage_CastleGear(SLib.SpriteImage):  # 274
     def __init__(self, parent):
         super().__init__(parent)
@@ -5228,19 +4358,6 @@ class SpriteImage_CastleGear(SLib.SpriteImage):  # 274
             self.aux[0].setPos(-144, -144)
 
         super().dataChanged()
-
-class SpriteImage_FiveEnemyRaft(SLib.SpriteImage_Static):  # 275
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FiveEnemyRaft'],
-            (0, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FiveEnemyRaft', '5_enemy_max_raft.png')
 
 
 class SpriteImage_GhostDoor(SpriteImage_Door):  # 276
@@ -5330,20 +4447,6 @@ class SpriteImage_PathIceBlock(SLib.SpriteImage_StaticMultiple):  # 287
         super().dataChanged()
 
 
-class SpriteImage_OldBarrel(SLib.SpriteImage_Static):  # 288
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['OldBarrel'],
-            (1, -7),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('OldBarrel', 'old_barrel.png')
-
-
 class SpriteImage_Box(SLib.SpriteImage_StaticMultiple):  # 289
     @staticmethod
     def loadImages():
@@ -5412,19 +4515,6 @@ class SpriteImage_HeavyParabeetle(SLib.SpriteImage_StaticMultiple):  # 292
             self.xOffset = -52
 
         super().dataChanged()
-
-
-class SpriteImage_IceCube(SLib.SpriteImage_Static):  # 294
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['IceCube'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('IceCube', 'ice_cube.png')
 
 
 class SpriteImage_NutPlatform(SLib.SpriteImage_StaticMultiple):  # 295
@@ -5600,7 +4690,7 @@ class SpriteImage_LongCannon(SLib.SpriteImage_StaticMultiple):  # 298
 
         middle = ImageCache[big_s + 'LongCannonM']
         solid = SLib.GetTile(1)
-        if self.dir == 0: # right
+        if self.dir == 0:  # right
             front = ImageCache[big_s + 'LongCannonFR']
             end = ImageCache[big_s + 'LongCannonEL']
         else:
@@ -5790,10 +4880,6 @@ class SpriteImage_RotSpotlight(SLib.SpriteImage_StaticMultiple):  # 306
         super().dataChanged()
 
 
-class SpriteImage_HammerBroPlatform(SpriteImage_HammerBroNormal):  # 308
-    pass
-
-
 class SpriteImage_SynchroFlameJet(SLib.SpriteImage_StaticMultiple):  # 309
     @staticmethod
     def loadImages():
@@ -5853,20 +4939,6 @@ class SpriteImage_ArrowSign(SLib.SpriteImage_StaticMultiple):  # 310
         super().dataChanged()
 
 
-class SpriteImage_MegaIcicle(SLib.SpriteImage_Static):  # 311
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MegaIcicle'],
-            (-24, -3),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MegaIcicle', 'mega_icicle.png')
-
-
 class SpriteImage_BubbleGen(SLib.SpriteImage):  # 314
 
     @staticmethod
@@ -5916,20 +4988,6 @@ class SpriteImage_BubbleGen(SLib.SpriteImage):  # 314
             painter.drawPixmap(int(x), int(y), Image)
 
 
-class SpriteImage_Bolt(SLib.SpriteImage_Static):  # 315
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Bolt'],
-            (2, 0),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Bolt', 'bolt.png')
-
-
 class SpriteImage_BoltBox(SLib.SpriteImage):  # 316
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -5972,28 +5030,6 @@ class SpriteImage_BoltBox(SLib.SpriteImage):  # 316
         painter.drawPixmap(0, ysize - 24, ImageCache['BoltBoxBL'])
         painter.drawTiledPixmap(24, ysize - 24, xsize - 48, 24, ImageCache['BoltBoxB'])
         painter.drawPixmap(xsize - 24, ysize - 24, ImageCache['BoltBoxBR'])
-
-
-class SpriteImage_BoxGenerator(SLib.SpriteImage_Static):  # 318
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['BoxGenerator'],
-            (0, -64),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BoxGenerator', 'box_generator.png')
-
-
-class SpriteImage_UnusedWiimoteDoor(SpriteImage_UnusedGiantDoor):  # 319
-    pass
-
-
-class SpriteImage_UnusedSlidingWiimoteDoor(SpriteImage_UnusedGiantDoor):  # 320
-    pass
 
 
 class SpriteImage_ArrowBlock(SLib.SpriteImage_StaticMultiple):  # 321
@@ -6087,20 +5123,6 @@ class SpriteImage_BooCircle(SLib.SpriteImage):  # 323
         self.aux[0].image = pix
 
 
-class SpriteImage_GhostHouseStand(SLib.SpriteImage_Static):  # 325
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GhostHouseStand'],
-            (8, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GhostHouseStand', 'ghost_house_stand.png')
-
-
 class SpriteImage_KingBill(SLib.SpriteImage):  # 326
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -6190,20 +5212,6 @@ class SpriteImage_KingBill(SLib.SpriteImage):  # 326
         super().dataChanged()
 
 
-class SpriteImage_LinePlatformBolt(SLib.SpriteImage_Static):  # 327
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LinePlatformBolt'],
-            (0, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LinePlatformBolt', 'line_platform_with_bolt.png')
-
-
 class SpriteImage_BubbleCannon(SLib.SpriteImage_StaticMultiple):  # 328
     @staticmethod
     def loadImages():
@@ -6262,19 +5270,6 @@ class SpriteImage_DishPlatform(SLib.SpriteImage_StaticMultiple):  # 331
         super().dataChanged()
 
 
-class SpriteImage_PlayerBlockPlatform(SLib.SpriteImage_Static):  # 333
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PlayerBlockPlatform'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PlayerBlockPlatform', 'player_block_platform.png')
-
-
 class SpriteImage_CheepGiant(SLib.SpriteImage):  # 334
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -6318,34 +5313,6 @@ class SpriteImage_CheepGiant(SLib.SpriteImage):  # 334
         painter.drawPixmap(0, 0, self.image)
 
 
-class SpriteImage_WendyKoopa(SLib.SpriteImage_Static):  # 336
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['WendyKoopa'],
-            (-23, -23),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('WendyKoopa', 'Wendy_Koopa.png')
-
-
-class SpriteImage_IggyKoopa(SLib.SpriteImage_Static):  # 337
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['IggyKoopa'],
-            (-17, -46),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('IggyKoopa', 'Iggy_Koopa.png')
-
-
 # Copied and edited from Miyamoto, credit to mrbengtsson for original code
 class SpriteImage_MovingBulletBillLauncher(SLib.SpriteImage):  # 338
     def __init__(self, parent):
@@ -6356,7 +5323,6 @@ class SpriteImage_MovingBulletBillLauncher(SLib.SpriteImage):  # 338
     def loadImages():
         SLib.loadIfNotInImageCache('BBLauncherT', 'bullet_launcher_top.png')
         SLib.loadIfNotInImageCache('BBLauncherM', 'bullet_launcher_middle.png')
-
 
     def dataChanged(self):
         self.image = None
@@ -6388,7 +5354,8 @@ class SpriteImage_MovingBulletBillLauncher(SLib.SpriteImage):  # 338
             painter.setOpacity(1)
 
             painter.drawPixmap(0, 24 * (self.cannonHeightTwo - self.cannonHeight), 24, 48, ImageCache['BBLauncherT'])
-            painter.drawTiledPixmap(0, 24 * (self.cannonHeightTwo - self.cannonHeight + 2), 24, 48 * self.cannonHeight, ImageCache['BBLauncherM'])
+            painter.drawTiledPixmap(0, 24 * (self.cannonHeightTwo - self.cannonHeight + 2), 24, 48 * self.cannonHeight,
+                                    ImageCache['BBLauncherM'])
 
         else:
             painter.drawPixmap(0, 0, 24, 48, ImageCache['BBLauncherT'])
@@ -6404,20 +5371,6 @@ class SpriteImage_Pipe_MovingUp(SpriteImage_Pipe):  # 339
         )[self.parent.spritedata[3] & 3]
 
         super().dataChanged()
-
-
-class SpriteImage_LemmyKoopa(SLib.SpriteImage_Static):  # 340
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LemmyKoopa'],
-            (-16, -53),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LemmyKoopa', 'Lemmy_Koopa.png')
 
 
 class SpriteImage_BigShell(SLib.SpriteImage_StaticMultiple):  # 341
@@ -6441,7 +5394,7 @@ class SpriteImage_BigShell(SLib.SpriteImage_StaticMultiple):  # 341
         super().dataChanged()
 
 
-class SpriteImage_Muncher(SLib.SpriteImage_StaticMultiple):  # 342    
+class SpriteImage_Muncher(SLib.SpriteImage_StaticMultiple):  # 342
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('Muncher', 'muncher.png')
@@ -6475,34 +5428,6 @@ class SpriteImage_Fuzzy(SLib.SpriteImage_StaticMultiple):  # 343
         super().dataChanged()
 
 
-class SpriteImage_MortonKoopa(SLib.SpriteImage_Static):  # 344
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MortonKoopa'],
-            (-17, -34),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MortonKoopa', 'Morton_Koopa.png')
-
-
-class SpriteImage_ChainHolder(SLib.SpriteImage_Static):  # 345
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ChainHolder'],
-            (0, -12)
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ChainHolder', 'chain_holder.png')
-
-
 class SpriteImage_HangingChainPlatform(SLib.SpriteImage_StaticMultiple):  # 346
     @staticmethod
     def loadImages():
@@ -6523,34 +5448,6 @@ class SpriteImage_HangingChainPlatform(SLib.SpriteImage_StaticMultiple):  # 346
         super().dataChanged()
 
 
-class SpriteImage_RoyKoopa(SLib.SpriteImage_Static):  # 347
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['RoyKoopa'],
-            (-27, -24)
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('RoyKoopa', 'Roy_Koopa.png')
-
-
-class SpriteImage_LudwigVonKoopa(SLib.SpriteImage_Static):  # 348
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LudwigVonKoopa'],
-            (-20, -30),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LudwigVonKoopa', 'Ludwig_Von_Koopa.png')
-
-
 class SpriteImage_MortonKoopaCastleBoss(SLib.SpriteImage):  # 349
     def __init__(self, parent):
         super().__init__(parent)
@@ -6564,20 +5461,6 @@ class SpriteImage_MortonKoopaCastleBoss(SLib.SpriteImage):  # 349
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('MortonKoopaCastleBoss', 'morton_castle_boss.png')
-
-
-class SpriteImage_RockyWrench(SLib.SpriteImage_Static):  # 352
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['RockyWrench'],
-            (4, -41),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('RockyWrench', 'rocky_wrench.png')
 
 
 class SpriteImage_Pipe_MovingDown(SpriteImage_Pipe):  # 353
@@ -6841,19 +5724,6 @@ class SpriteImage_CubeKinokoRot(SLib.SpriteImage_StaticMultiple):  # 366
         super().dataChanged()
 
 
-class SpriteImage_CubeKinokoLine(SLib.SpriteImage_Static):  # 367
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['CubeKinokoP'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('CubeKinokoP', 'cube_kinoko_p.png')
-
-
 class SpriteImage_FlashRaft(SLib.SpriteImage_StaticMultiple):  # 368
     def __init__(self, parent):
         super().__init__(
@@ -6908,24 +5778,6 @@ class SpriteImage_SlidingPenguin(SLib.SpriteImage_StaticMultiple):  # 369
             self.image = ImageCache['PenguinR']
 
         super().dataChanged()
-
-
-class SpriteImage_CloudBlock(SLib.SpriteImage_Static):  # 370
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['CloudBlock'],
-            (-4, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('CloudBlock', 'cloud_block.png')
-
-
-class SpriteImage_RollingHillCoin(SpriteImage_SpecialCoin):  # 371
-    pass
 
 
 class SpriteImage_IggyKoopaCastleBoss(SLib.SpriteImage):  # 372
@@ -7031,11 +5883,11 @@ class SpriteImage_MovingFence(SLib.SpriteImage):  # 376
 
         if distance == 0:
             self.aux[0].setSize(0, 0)
-        elif direction == 1: # horizontal
+        elif direction == 1:  # horizontal
             self.aux[0].direction = 1
             self.aux[0].setSize((distance * 32) + self.width, 16)
             self.aux[0].setPos(-distance * 24, (self.height * 0.75) - 12)
-        else: # vertical
+        else:  # vertical
             self.aux[0].direction = 2
             self.aux[0].setSize(16, (distance * 32) + self.height)
             self.aux[0].setPos((self.width * 0.75) - 12, -distance * 24)
@@ -7146,19 +5998,6 @@ class SpriteImage_IceBlock(SLib.SpriteImage_StaticMultiple):  # 385
         super().dataChanged()
 
 
-class SpriteImage_PowBlock(SLib.SpriteImage_Static):  # 386
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['POW']
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('POW', 'pow.png')
-
-
 class SpriteImage_Bush(SLib.SpriteImage_StaticMultiple):  # 387
     def __init__(self, parent):
         # this sprite image should actually show behind layer 1...
@@ -7190,28 +6029,6 @@ class SpriteImage_Bush(SLib.SpriteImage_StaticMultiple):  # 387
         super().dataChanged()
 
 
-class SpriteImage_Barrel(SLib.SpriteImage_Static):  # 388
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Barrel'],
-            (-4, -8),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Barrel', 'barrel.png')
-
-
-class SpriteImage_StarCoinBoltControlled(SpriteImage_StarCoin):  # 389
-    pass
-
-
-class SpriteImage_BoltControlledCoin(SpriteImage_SpecialCoin):  # 390
-    pass
-
-
 class SpriteImage_GlowBlock(SLib.SpriteImage):  # 391
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -7224,48 +6041,6 @@ class SpriteImage_GlowBlock(SLib.SpriteImage):  # 391
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('GlowBlock', 'glow_block.png')
-
-
-class SpriteImage_PropellerBlock(SLib.SpriteImage_Static):  # 393
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PropellerBlock'],
-            (-1, -6),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PropellerBlock', 'propeller_block.png')
-
-
-class SpriteImage_LemmyBall(SLib.SpriteImage_Static):  # 394
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LemmyBall'],
-            (-6, 0),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LemmyBall', 'lemmyball.png')
-
-
-class SpriteImage_SpinyCheep(SLib.SpriteImage_Static):  # 395
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SpinyCheep'],
-            (-1, -2),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SpinyCheep', 'cheep_spiny.png')
 
 
 class SpriteImage_MoveWhenOn(SLib.SpriteImage):  # 396
@@ -7382,7 +6157,7 @@ class SpriteImage_LongSpikedStakeRight(SpriteImage_LongSpikedStake):  # 398
         self.aux.append(SLib.AuxiliaryTrackObject(parent, 1296, 16, SLib.AuxiliaryTrackObject.Horizontal))
         self.aux.append(SLib.AuxiliaryImage(parent, 2021, 99))
 
-        self.dimensions = (-112, 0, 128, 66) # 6 mid sections + end section
+        self.dimensions = (-112, 0, 128, 66)  # 6 mid sections + end section
 
 
 class SpriteImage_LongSpikedStakeLeft(SpriteImage_LongSpikedStake):  # 400
@@ -7404,6 +6179,7 @@ class SpriteImage_MassiveSpikedStakeDown(SpriteImage_MassiveSpikedStake):  # 401
         self.aux.append(SLib.AuxiliaryImage(parent, 248, 3016))
 
         self.dimensions = (-67, -123, 165, 139)
+
 
 class SpriteImage_LineQBlock(SpriteImage_Block):  # 402
     def __init__(self, parent):
@@ -7480,24 +6256,24 @@ class SpriteImage_BossControllerCastleBoss(SLib.SpriteImage):  # 407
         boss = (self.parent.spritedata[5] & 0xF) % 7
 
         self.aux[0].setPos(*(
-                (0, -216),
-                (0, -216),
-                (0, -216),
-                (0, -216),
-                (0, -216),
-                (0, -240),
-                (0, -216)
+            (0, -216),
+            (0, -216),
+            (0, -216),
+            (0, -216),
+            (0, -216),
+            (0, -240),
+            (0, -216)
         )[boss])
         self.aux[1].setPos(self.aux[0].x(), self.aux[0].y() + 96)
         self.aux[2].setPos(*(
-                (576, -120),
-                (576, -120),
-                (600, -120),
-                (576, -120),
-                (576, -120),
-                (600, -120),
-                (576, -487)
-            )[boss])
+            (576, -120),
+            (576, -120),
+            (600, -120),
+            (576, -120),
+            (576, -120),
+            (600, -120),
+            (576, -487)
+        )[boss])
         self.aux[3].setPos(self.aux[2].x(), self.aux[2].y() - 96)
 
         super().dataChanged()
@@ -7505,43 +6281,6 @@ class SpriteImage_BossControllerCastleBoss(SLib.SpriteImage):  # 407
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('ShutterDoor', 'shutter_door.png')
-
-
-class SpriteImage_ToadHouseBalloonUnused(SpriteImage_ToadHouseBalloon):  # 411
-    def dataChanged(self):
-        self.livesNum = (self.parent.spritedata[4] >> 4) & 3
-
-        super().dataChanged()
-
-        self.yOffset = 8 - (self.image.height() / 3)
-
-
-class SpriteImage_ToadHouseBalloonUsed(SpriteImage_ToadHouseBalloon):  # 412
-    def dataChanged(self):
-
-        self.livesNum = (self.parent.spritedata[4] >> 4) & 3
-        self.hasHandle = not ((self.parent.spritedata[5] >> 4) & 1)
-
-        super().dataChanged()
-
-        if self.hasHandle:
-            self.yOffset = 12
-        else:
-            self.yOffset = 16 - (self.image.height() / 3)
-
-
-class SpriteImage_WendyRing(SLib.SpriteImage_Static):  # 413
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['WendyRing'],
-            (-4, 4),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('WendyRing', 'wendy_ring.png')
 
 
 class SpriteImage_Gabon(SLib.SpriteImage_StaticMultiple):  # 414
@@ -7559,29 +6298,15 @@ class SpriteImage_Gabon(SLib.SpriteImage_StaticMultiple):  # 414
 
         if throwdir == 0:
             self.image = ImageCache['GabonSpike']
-            self.offset = (-7, -31) #-11, -47
+            self.offset = (-7, -31)  #-11, -47
         else:
             self.image = (
                 ImageCache['GabonLeft'],
                 ImageCache['GabonRight'],
             )[facing]
-            self.offset = (-8, -33) #-12, -50
+            self.offset = (-8, -33)  #-12, -50
 
         super().dataChanged()
-
-
-class SpriteImage_BetaLarryKoopa(SLib.SpriteImage_Static):  # 415
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['LarryKoopaBeta'],
-            (-13, -22.5),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('LarryKoopaBeta', 'Larry_Koopa_Unused.png')
 
 
 class SpriteImage_InvisibleOneUp(SLib.SpriteImage_Static):  # 416
@@ -7598,44 +6323,6 @@ class SpriteImage_InvisibleOneUp(SLib.SpriteImage_Static):  # 416
     def loadImages():
         if 'InvisibleOneUp' in ImageCache: return
         ImageCache['InvisibleOneUp'] = ImageCache['BlockContents'][11].scaled(16, 16)
-
-
-class SpriteImage_SpinjumpCoin(SLib.SpriteImage_Static):  # 417
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SpecialCoin'],
-        )
-        self.alpha = 0.55
-
-
-class SpriteImage_BanzaiGen(SLib.SpriteImage_Static):  # 418
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['BanzaiGen'],
-            (-48, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BanzaiGen', 'banzai_bill_gen.png')
-
-
-class SpriteImage_Bowser(SLib.SpriteImage_Static):  # 419
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Bowser'],
-            (-35, -70),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Bowser', 'bowser.png')
 
 
 class SpriteImage_GiantGlowBlock(SLib.SpriteImage):  # 420
@@ -7661,19 +6348,6 @@ class SpriteImage_GiantGlowBlock(SLib.SpriteImage):  # 420
         else:
             self.aux[0].image = ImageCache['GiantGlowBlockOff']
             self.aux[0].setSize(48, 48)
-
-
-class SpriteImage_UnusedGhostDoor(SLib.SpriteImage_Static):  # 421
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['GhostDoorU'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('GhostDoorU', 'ghost_door.png')
 
 
 class SpriteImage_ToadQBlock(SpriteImage_Block):  # 422
@@ -7734,34 +6408,6 @@ class SpriteImage_Jellybeam(SLib.SpriteImage_Static):  # 425
         super().dataChanged()
 
 
-class SpriteImage_Kamek(SLib.SpriteImage_Static):  # 427
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Kamek'],
-            (-19, -15),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Kamek', 'kamek.png')
-
-
-class SpriteImage_MGPanel(SLib.SpriteImage_Static):  # 428
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MGPanel'],
-            (-2, -6),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MGPanel', 'minigame_flip_panel.png')
-
-
 class SpriteImage_BowserController(SLib.SpriteImage):  # 431
     def __init__(self, parent):
         super().__init__(parent)
@@ -7776,34 +6422,6 @@ class SpriteImage_BowserController(SLib.SpriteImage):  # 431
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('BowserShutterDoor', 'bowser_shutter_door.png')
-
-
-class SpriteImage_Toad(SLib.SpriteImage_Static):  # 432
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Toad'],
-            (-1, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Toad', 'toad.png')
-
-
-class SpriteImage_FloatingQBlock(SLib.SpriteImage_Static):  # 433
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['FloatingQBlock'],
-            (-6, -6),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('FloatingQBlock', 'floating_qblock.png')
 
 
 class SpriteImage_WarpCannon(SLib.SpriteImage_StaticMultiple):  # 434
@@ -7901,20 +6519,6 @@ class SpriteImage_CageBlocks(SLib.SpriteImage_StaticMultiple):  # 438
         super().dataChanged()
 
 
-class SpriteImage_CagePeachFake(SLib.SpriteImage_Static):  # 439
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['CagePeachFake'],
-            (-18, -106),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('CagePeachFake', 'cage_peach_fake.png')
-
-
 class SpriteImage_HorizontalRope(SLib.SpriteImage):  # 440
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -8005,47 +6609,6 @@ class SpriteImage_MushroomPlatform(SLib.SpriteImage):  # 441
         painter.drawPixmap(int(self.width * 1.5) - tilesize, 0, ImageCache[color + 'ShroomR'])
 
 
-class SpriteImage_ReplayBlock(SLib.SpriteImage_Static):  # 443
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ReplayBlock'],
-            (-8, -16),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ReplayBlock', 'replay_block.png')
-
-
-class SpriteImage_PreSwingingVine(SLib.SpriteImage_Static):  # 444
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['PreSwingVine'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('PreSwingVine', 'swing_vine.png')
-
-
-class SpriteImage_CagePeachReal(SLib.SpriteImage_Static):  # 445
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['CagePeachReal'],
-            (-18, -106),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('CagePeachReal', 'cage_peach_real.png')
-
-
 class SpriteImage_UnderwaterLamp(SLib.SpriteImage):  # 447
     def __init__(self, parent):
         super().__init__(parent, 1.5)
@@ -8062,37 +6625,10 @@ class SpriteImage_UnderwaterLamp(SLib.SpriteImage):  # 447
         SLib.loadIfNotInImageCache('UnderwaterLamp', 'underwater_lamp.png')
 
 
-class SpriteImage_MetalBar(SLib.SpriteImage_Static):  # 448
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['MetalBar'],
-            (0, -32),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('MetalBar', 'metal_bar.png')
-
-
 class SpriteImage_Pipe_EnterableUp(SpriteImage_PipeStationary):  # 450
     def dataChanged(self):
         self.length = (self.parent.spritedata[5] & 0xF) + 2
         super().dataChanged()
-
-
-class SpriteImage_ScaredyRatDespawner(SLib.SpriteImage_Static):  # 451
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['ScaredyRatDespawner'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('ScaredyRatDespawner', 'scaredy_rat_despawner.png')
 
 
 class SpriteImage_BowserDoor(SLib.SpriteImage_Static):  # 452
@@ -8139,21 +6675,6 @@ class SpriteImage_Seaweed(SLib.SpriteImage_StaticMultiple):  # 453
         super().dataChanged()
 
 
-class SpriteImage_HammerPlatform(SLib.SpriteImage_Static):  # 455
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['HammerPlatform'],
-            (-24, -8),
-        )
-        self.parent.setZValue(24999)
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('HammerPlatform', 'hammer_platform.png')
-
-
 class SpriteImage_BossBridge(SLib.SpriteImage_StaticMultiple):  # 456
     @staticmethod
     def loadImages():
@@ -8171,20 +6692,6 @@ class SpriteImage_BossBridge(SLib.SpriteImage_StaticMultiple):  # 456
         )[style]
 
         super().dataChanged()
-
-
-class SpriteImage_SpinningThinBars(SLib.SpriteImage_Static):  # 457
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SpinningThinBars'],
-            (-115.4, -115.4),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SpinningThinBars', 'spinning_thin_bars.png')
 
 
 class SpriteImage_LongMetalBar(SLib.SpriteImage):  # 458
@@ -8332,20 +6839,20 @@ class SpriteImage_LavaIronBlock(SLib.SpriteImage_Static):  # 466
         direction = self.parent.spritedata[2] & 3
         distance = (self.parent.spritedata[4] & 0xF0) >> 4
 
-        if direction <= 1: # horizontal
+        if direction <= 1:  # horizontal
             self.aux[0].direction = 1
             self.aux[0].setSize((distance * 16) + 16, 16)
-        else: # vertical
+        else:  # vertical
             self.aux[0].direction = 2
             self.aux[0].setSize(16, (distance * 16) + 16)
 
-        if direction == 0: # right
+        if direction == 0:  # right
             self.aux[0].setPos(self.width + 48, self.height / 2)
-        elif direction == 1: # left
+        elif direction == 1:  # left
             self.aux[0].setPos((-distance * 24) + 2, self.height / 2)
-        elif direction == 2: # up
+        elif direction == 2:  # up
             self.aux[0].setPos((self.width * 0.75) - 12, (-distance * 24))
-        else: # down
+        else:  # down
             self.aux[0].setPos((self.width * 0.75) - 12, self.height)
 
         super().dataChanged()
@@ -8370,9 +6877,9 @@ class SpriteImage_MovingGemBlock(SLib.SpriteImage_Static):  # 467
         distance = (self.parent.spritedata[4] & 0xF0) >> 4
 
         self.aux[0].setSize(16, (distance * 16) + 16)
-        if direction == 0: # up
+        if direction == 0:  # up
             self.aux[0].setPos(self.width / 2, -distance * 24)
-        else: # down
+        else:  # down
             self.aux[0].setPos(self.width / 2, self.height - 8)
 
         super().dataChanged()
@@ -8400,22 +6907,13 @@ class SpriteImage_BoltPlatform(SLib.SpriteImage):  # 469
         super().paint(painter)
 
         painter.drawPixmap(0, 0, ImageCache['BoltPlatformL'])
+
+        #print(ImageCache['BoltPlatformL'].width(), ImageCache['BoltPlatformL'].height(),
+        #      ImageCache['BoltPlatformM'].width(), ImageCache['BoltPlatformM'].height(),
+        #      ImageCache['BoltPlatformR'].width(), ImageCache['BoltPlatformR'].height(),)
+
         painter.drawTiledPixmap(24, 3, int(self.width * 1.5) - 48, 24, ImageCache['BoltPlatformM'])
         painter.drawPixmap(int(self.width * 1.5) - 24, 0, ImageCache['BoltPlatformR'])
-
-
-class SpriteImage_BoltPlatformWire(SLib.SpriteImage_Static):  # 470
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['BoltPlatformWire'],
-            (5, -240),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('BoltPlatformWire', 'bolt_platform_wire.png')
 
 
 class SpriteImage_PotPlatform(SLib.SpriteImage_Static):  # 471
@@ -8493,33 +6991,6 @@ class SpriteImage_IceFloe(SLib.SpriteImage_StaticMultiple):  # 475
         self.image = ImageCache['IceFloe%d' % size]
 
         super().dataChanged()
-
-
-class SpriteImage_FlyingWrench(SLib.SpriteImage_Static):  # 476
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['Wrench'],
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('Wrench', 'wrench.png')
-
-
-class SpriteImage_SuperGuideBlock(SLib.SpriteImage_Static):  # 477
-    def __init__(self, parent):
-        super().__init__(
-            parent,
-            1.5,
-            ImageCache['SuperGuide'],
-            (-4, -4),
-        )
-
-    @staticmethod
-    def loadImages():
-        SLib.loadIfNotInImageCache('SuperGuide', 'superguide_block.png')
 
 
 class SpriteImage_BowserSwitchSm(SLib.SpriteImage_StaticMultiple):  # 478
@@ -8647,375 +7118,243 @@ class SpriteImage_FinalBossEffects(SLib.SpriteImage):  # 482
 
 
 ImageClasses = {
-    0: SpriteImage_MeasureJump,
-    9: SpriteImage_CharacterSpawner,
-    20: SpriteImage_Goomba,
-    21: SpriteImage_ParaGoomba,
-    23: SpriteImage_HorzMovingPlatform,
-    24: SpriteImage_BuzzyBeetle,
-    25: SpriteImage_Spiny,
-    26: SpriteImage_UpsideDownSpiny,
-    27: SpriteImage_DSStoneBlock_Vert,
-    28: SpriteImage_DSStoneBlock_Horz,
-    30: SpriteImage_OldStoneBlock_NoSpikes,
-    31: SpriteImage_VertMovingPlatform,
-    32: SpriteImage_StarCoinRegular,
-    40: SpriteImage_QSwitch,
-    41: SpriteImage_PSwitch,
-    42: SpriteImage_ExcSwitch,
-    43: SpriteImage_QSwitchBlock,
-    44: SpriteImage_PSwitchBlock,
-    45: SpriteImage_ExcSwitchBlock,
-    46: SpriteImage_Podoboo,
-    47: SpriteImage_Thwomp,
-    48: SpriteImage_GiantThwomp,
-    49: SpriteImage_UnusedSeesaw,
-    50: SpriteImage_FallingPlatform,
-    51: SpriteImage_TiltingGirder,
-    52: SpriteImage_UnusedRotPlatforms,
-    53: SpriteImage_Quicksand,
-    54: SpriteImage_Lakitu,
-    55: SpriteImage_UnusedRisingSeesaw,
-    56: SpriteImage_RisingTiltGirder,
-    57: SpriteImage_KoopaTroopa,
-    58: SpriteImage_KoopaParatroopa,
-    59: SpriteImage_LineTiltGirder,
-    60: SpriteImage_SpikeTop,
-    61: SpriteImage_BigBoo,
-    62: SpriteImage_SpinningFirebar,
-    63: SpriteImage_SpikeBall,
-    64: SpriteImage_OutdoorsFog,
-    65: SpriteImage_PipePiranhaUp,
-    66: SpriteImage_PipePiranhaDown,
-    67: SpriteImage_PipePiranhaRight,
-    68: SpriteImage_PipePiranhaLeft,
-    69: SpriteImage_PipeFiretrapUp,
-    70: SpriteImage_PipeFiretrapDown,
-    71: SpriteImage_PipeFiretrapRight,
-    72: SpriteImage_PipeFiretrapLeft,
-    73: SpriteImage_GroundPiranha,
-    74: SpriteImage_BigGroundPiranha,
-    75: SpriteImage_GroundFiretrap,
-    76: SpriteImage_BigGroundFiretrap,
-    77: SpriteImage_ShipKey,
-    78: SpriteImage_CloudTrampoline,
-    80: SpriteImage_FireBro,
-    81: SpriteImage_OldStoneBlock_SpikesLeft,
-    82: SpriteImage_OldStoneBlock_SpikesRight,
-    83: SpriteImage_OldStoneBlock_SpikesLeftRight,
-    84: SpriteImage_OldStoneBlock_SpikesTop,
-    85: SpriteImage_OldStoneBlock_SpikesBottom,
-    86: SpriteImage_OldStoneBlock_SpikesTopBottom,
-    87: SpriteImage_TrampolineWall,
-    92: SpriteImage_BulletBillLauncher,
-    93: SpriteImage_BanzaiBillLauncher,
-    94: SpriteImage_BoomerangBro,
-    95: SpriteImage_HammerBroNormal,
-    96: SpriteImage_RotationControllerSwaying,
-    97: SpriteImage_RotationControlledSolidBetaPlatform,
-    98: SpriteImage_GiantSpikeBall,
-    99: SpriteImage_PipeEnemyGenerator,
-    100: SpriteImage_Swooper,
-    101: SpriteImage_Bobomb,
-    102: SpriteImage_Broozer,
-    103: SpriteImage_PlatformGenerator,
-    104: SpriteImage_AmpNormal,
-    105: SpriteImage_Pokey,
-    106: SpriteImage_LinePlatform,
-    107: SpriteImage_RotationControlledPassBetaPlatform,
-    108: SpriteImage_AmpLine,
-    109: SpriteImage_ChainBall,
-    110: SpriteImage_Sunlight,
-    111: SpriteImage_Blooper,
-    112: SpriteImage_BlooperBabies,
-    113: SpriteImage_Flagpole,
-    114: SpriteImage_FlameCannon,
-    115: SpriteImage_Cheep,
-    116: SpriteImage_CoinCheep,
-    117: SpriteImage_PulseFlameCannon,
-    118: SpriteImage_DryBones,
-    119: SpriteImage_GiantDryBones,
-    120: SpriteImage_SledgeBro,
-    122: SpriteImage_OneWayPlatform,
-    123: SpriteImage_UnusedCastlePlatform,
-    125: SpriteImage_FenceKoopaHorz,
-    126: SpriteImage_FenceKoopaVert,
-    127: SpriteImage_FlipFence,
-    128: SpriteImage_FlipFenceLong,
-    129: SpriteImage_4Spinner,
-    130: SpriteImage_Wiggler,
-    131: SpriteImage_Boo,
-    132: SpriteImage_UnusedBlockPlatform1,
-    133: SpriteImage_StalagmitePlatform,
-    134: SpriteImage_Crow,
-    135: SpriteImage_HangingPlatform,
-    136: SpriteImage_RotBulletLauncher,
-    137: SpriteImage_SpikedStakeDown,
-    138: SpriteImage_Water,
-    139: SpriteImage_Lava,
-    140: SpriteImage_SpikedStakeUp,
-    141: SpriteImage_SpikedStakeRight,
-    142: SpriteImage_SpikedStakeLeft,
-    143: SpriteImage_Arrow,
-    144: SpriteImage_RedCoin,
-    145: SpriteImage_FloatingBarrel,
-    146: SpriteImage_ChainChomp,
-    147: SpriteImage_Coin,
-    148: SpriteImage_Spring,
-    149: SpriteImage_RotationControllerSpinning,
-    151: SpriteImage_Porcupuffer,
-    153: SpriteImage_QSwitchUnused,
-    155: SpriteImage_StarCoinLineControlled,
-    156: SpriteImage_RedCoinRing,
-    157: SpriteImage_BigBrick,
-    158: SpriteImage_FireSnake,
-    160: SpriteImage_UnusedBlockPlatform2,
-    161: SpriteImage_PipeBubbles,
-    166: SpriteImage_BlockTrain,
-    170: SpriteImage_ChestnutGoomba,
-    171: SpriteImage_PowerupBubble,
-    172: SpriteImage_ScrewMushroomWithBolt,
-    173: SpriteImage_GiantFloatingLog,
-    174: SpriteImage_OneWayGate,
-    175: SpriteImage_FlyingQBlock,
-    176: SpriteImage_RouletteBlock,
-    177: SpriteImage_FireChomp,
-    178: SpriteImage_ScalePlatform,
-    179: SpriteImage_SpecialExit,
-    180: SpriteImage_CheepChomp,
-    182: SpriteImage_EventDoor,
-    185: SpriteImage_ToadBalloon,
-    187: SpriteImage_PlayerBlock,
-    188: SpriteImage_MidwayFlag,
-    189: SpriteImage_LarryKoopa,
-    190: SpriteImage_TiltingGirderUnused,
-    191: SpriteImage_TileEvent,
-    192: SpriteImage_LarryKoopaCastleBoss,
-    193: SpriteImage_Urchin,
-    194: SpriteImage_MegaUrchin,
-    195: SpriteImage_HuckitCrab,
-    196: SpriteImage_Fishbones,
-    197: SpriteImage_Clam,
-    198: SpriteImage_GiantGoomba,
-    199: SpriteImage_MegaGoomba,
-    200: SpriteImage_Microgoomba,
-    201: SpriteImage_Icicle,
-    202: SpriteImage_MGCannon,
-    203: SpriteImage_MGChest,
-    205: SpriteImage_GiantBubbleNormal,
-    206: SpriteImage_Zoom,
-    207: SpriteImage_QBlock,
-    208: SpriteImage_QBlockUnused,
-    209: SpriteImage_BrickBlock,
-    211: SpriteImage_BowserJr1stController,
-    212: SpriteImage_RollingHill,
-    214: SpriteImage_FreefallPlatform,
-    216: SpriteImage_Poison,
-    219: SpriteImage_LineBlock,
-    221: SpriteImage_InvisibleBlock,
-    222: SpriteImage_ConveyorSpike,
-    223: SpriteImage_SpringBlock,
-    224: SpriteImage_JumboRay,
-    225: SpriteImage_FloatingCoin,
-    226: SpriteImage_GiantBubbleUnused,
-    227: SpriteImage_PipeCannon,
-    228: SpriteImage_ExtendShroom,
-    229: SpriteImage_SandPillar,
-    230: SpriteImage_Bramball,
-    231: SpriteImage_WiggleShroom,
-    232: SpriteImage_MechaKoopa,
-    233: SpriteImage_Bulber,
-    237: SpriteImage_PCoin,
-    238: SpriteImage_Foo,
-    240: SpriteImage_GiantWiggler,
-    242: SpriteImage_FallingLedgeBar,
-    252: SpriteImage_EventDeactivBlock,
-    253: SpriteImage_RotControlledCoin,
-    254: SpriteImage_RotControlledPipe,
-    255: SpriteImage_RotatingQBlock,
-    257: SpriteImage_MoveWhenOnMetalLavaBlock,
-    256: SpriteImage_RotatingBrickBlock,
-    259: SpriteImage_RegularDoor,
-    260: SpriteImage_MovementController_TwoWayLine,
-    261: SpriteImage_OldStoneBlock_MovementControlled,
-    262: SpriteImage_PoltergeistItem,
-    263: SpriteImage_WaterPiranha,
-    264: SpriteImage_WalkingPiranha,
-    265: SpriteImage_FallingIcicle,
-    266: SpriteImage_RotatingFence,
-    267: SpriteImage_TiltGrate,
-    268: SpriteImage_LavaGeyser,
-    269: SpriteImage_Parabomb,
-    271: SpriteImage_ScaredyRat,
-    272: SpriteImage_IceBro,
-    274: SpriteImage_CastleGear,
-    275: SpriteImage_FiveEnemyRaft,
-    276: SpriteImage_GhostDoor,
-    277: SpriteImage_TowerDoor,
-    278: SpriteImage_CastleDoor,
-    280: SpriteImage_GiantIceBlock,
-    286: SpriteImage_WoodCircle,
-    287: SpriteImage_PathIceBlock,
-    288: SpriteImage_OldBarrel,
-    289: SpriteImage_Box,
-    291: SpriteImage_Parabeetle,
-    292: SpriteImage_HeavyParabeetle,
-    294: SpriteImage_IceCube,
-    295: SpriteImage_NutPlatform,
-    296: SpriteImage_MegaBuzzy,
-    297: SpriteImage_DragonCoaster,
-    298: SpriteImage_LongCannon,
-    299: SpriteImage_CannonMulti,
-    300: SpriteImage_RotCannon,
-    301: SpriteImage_RotCannonPipe,
-    303: SpriteImage_MontyMole,
-    304: SpriteImage_RotFlameCannon,
-    305: SpriteImage_LightCircle,
-    306: SpriteImage_RotSpotlight,
-    308: SpriteImage_HammerBroPlatform,
-    309: SpriteImage_SynchroFlameJet,
-    310: SpriteImage_ArrowSign,
-    311: SpriteImage_MegaIcicle,
-    314: SpriteImage_BubbleGen,
-    315: SpriteImage_Bolt,
-    316: SpriteImage_BoltBox,
-    318: SpriteImage_BoxGenerator,
-    319: SpriteImage_UnusedWiimoteDoor,
-    320: SpriteImage_UnusedSlidingWiimoteDoor,
-    321: SpriteImage_ArrowBlock,
-    323: SpriteImage_BooCircle,
-    325: SpriteImage_GhostHouseStand,
-    326: SpriteImage_KingBill,
-    327: SpriteImage_LinePlatformBolt,
-    328: SpriteImage_BubbleCannon,
-    330: SpriteImage_RopeLadder,
-    331: SpriteImage_DishPlatform,
-    333: SpriteImage_PlayerBlockPlatform,
-    334: SpriteImage_CheepGiant,
-    336: SpriteImage_WendyKoopa,
-    337: SpriteImage_IggyKoopa,
-    338: SpriteImage_MovingBulletBillLauncher,
-    339: SpriteImage_Pipe_MovingUp,
-    340: SpriteImage_LemmyKoopa,
-    341: SpriteImage_BigShell,
-    342: SpriteImage_Muncher,
-    343: SpriteImage_Fuzzy,
-    344: SpriteImage_MortonKoopa,
-    345: SpriteImage_ChainHolder,
-    346: SpriteImage_HangingChainPlatform,
-    347: SpriteImage_RoyKoopa,
-    348: SpriteImage_LudwigVonKoopa,
-    349: SpriteImage_MortonKoopaCastleBoss,
-    352: SpriteImage_RockyWrench,
-    353: SpriteImage_Pipe_MovingDown,
-    354: SpriteImage_BrownBlock,
-    355: SpriteImage_RollingHillWith1Pipe,
-    356: SpriteImage_BrownBlock,
-    357: SpriteImage_Fruit,
-    358: SpriteImage_LavaParticles,
-    359: SpriteImage_WallLantern,
-    360: SpriteImage_RollingHillWith8Pipes,
-    361: SpriteImage_CrystalBlock,
-    362: SpriteImage_ColoredBox,
-    364: SpriteImage_RoyKoopaCastleBoss,
-    365: SpriteImage_LudwigVonKoopaCastleBoss,
-    366: SpriteImage_CubeKinokoRot,
-    367: SpriteImage_CubeKinokoLine,
-    368: SpriteImage_FlashRaft,
-    369: SpriteImage_SlidingPenguin,
-    370: SpriteImage_CloudBlock,
-    371: SpriteImage_RollingHillCoin,
-    372: SpriteImage_IggyKoopaCastleBoss,
-    373: SpriteImage_RaftWater,
-    374: SpriteImage_SnowWind,
-    375: SpriteImage_WendyKoopaCastleBoss,
-    376: SpriteImage_MovingFence,
-    377: SpriteImage_Pipe_Up,
-    378: SpriteImage_Pipe_Down,
-    379: SpriteImage_Pipe_Right,
-    380: SpriteImage_Pipe_Left,
-    381: SpriteImage_LemmyKoopaCastleBoss,
-    382: SpriteImage_ScrewMushroomNoBolt,
-    383: SpriteImage_KamekController,
-    384: SpriteImage_PipeCooliganGenerator,
-    385: SpriteImage_IceBlock,
-    386: SpriteImage_PowBlock,
-    387: SpriteImage_Bush,
-    388: SpriteImage_Barrel,
-    389: SpriteImage_StarCoinBoltControlled,
-    390: SpriteImage_BoltControlledCoin,
-    391: SpriteImage_GlowBlock,
-    393: SpriteImage_PropellerBlock,
-    394: SpriteImage_LemmyBall,
-    395: SpriteImage_SpinyCheep,
-    396: SpriteImage_MoveWhenOn,
-    397: SpriteImage_GhostHouseBox,
-    398: SpriteImage_LongSpikedStakeRight,
-    400: SpriteImage_LongSpikedStakeLeft,
-    401: SpriteImage_MassiveSpikedStakeDown,
-    402: SpriteImage_LineQBlock,
-    403: SpriteImage_LineBrickBlock,
-    404: SpriteImage_MassiveSpikedStakeUp,
-    405: SpriteImage_BowserJr2ndController,
-    406: SpriteImage_BowserJr3rdController,
-    407: SpriteImage_BossControllerCastleBoss,
-    411: SpriteImage_ToadHouseBalloonUnused,
-    412: SpriteImage_ToadHouseBalloonUsed,
-    413: SpriteImage_WendyRing,
-    414: SpriteImage_Gabon,
-    415: SpriteImage_BetaLarryKoopa,
-    416: SpriteImage_InvisibleOneUp,
-    417: SpriteImage_SpinjumpCoin,
-    418: SpriteImage_BanzaiGen,
-    419: SpriteImage_Bowser,
-    420: SpriteImage_GiantGlowBlock,
-    421: SpriteImage_UnusedGhostDoor,
-    422: SpriteImage_ToadQBlock,
-    423: SpriteImage_ToadBrickBlock,
-    424: SpriteImage_PalmTree,
-    425: SpriteImage_Jellybeam,
-    427: SpriteImage_Kamek,
-    428: SpriteImage_MGPanel,
-    431: SpriteImage_BowserController,
-    432: SpriteImage_Toad,
-    433: SpriteImage_FloatingQBlock,
-    434: SpriteImage_WarpCannon,
-    435: SpriteImage_GhostFog,
-    437: SpriteImage_PurplePole,
-    438: SpriteImage_CageBlocks,
-    439: SpriteImage_CagePeachFake,
-    440: SpriteImage_HorizontalRope,
-    441: SpriteImage_MushroomPlatform,
-    443: SpriteImage_ReplayBlock,
-    444: SpriteImage_PreSwingingVine,
-    445: SpriteImage_CagePeachReal,
-    447: SpriteImage_UnderwaterLamp,
-    448: SpriteImage_MetalBar,
-    450: SpriteImage_Pipe_EnterableUp,
-    451: SpriteImage_ScaredyRatDespawner,
-    452: SpriteImage_BowserDoor,
-    453: SpriteImage_Seaweed,
-    455: SpriteImage_HammerPlatform,
-    456: SpriteImage_BossBridge,
-    457: SpriteImage_SpinningThinBars,
-    458: SpriteImage_LongMetalBar,
-    460: SpriteImage_SilverGearBlock,
-    462: SpriteImage_EnormousBlock,
-    463: SpriteImage_Glare,
-    464: SpriteImage_SwingingVine,
-    466: SpriteImage_LavaIronBlock,
-    467: SpriteImage_MovingGemBlock,
-    469: SpriteImage_BoltPlatform,
-    470: SpriteImage_BoltPlatformWire,
-    471: SpriteImage_PotPlatform,
-    472: SpriteImage_IceFloeGenerator,
-    473: SpriteImage_FloatingIceFloeGenerator,
-    475: SpriteImage_IceFloe,
-    476: SpriteImage_FlyingWrench,
-    477: SpriteImage_SuperGuideBlock,
-    478: SpriteImage_BowserSwitchSm,
-    479: SpriteImage_BowserSwitchLg,
-    480: SpriteImage_MortonSpikedStake,
-    481: SpriteImage_FinalBossRubble,
-    482: SpriteImage_FinalBossEffects,
-}
+                   0: SpriteImage_MeasureJump,
+                   23: SpriteImage_HorzMovingPlatform,
+                   27: SpriteImage_DSStoneBlock_Vert,
+                   28: SpriteImage_DSStoneBlock_Horz,
+                   30: SpriteImage_OldStoneBlock_NoSpikes,
+                   31: SpriteImage_VertMovingPlatform,
+                   40: SpriteImage_QSwitch,
+                   41: SpriteImage_PSwitch,
+                   42: SpriteImage_ExcSwitch,
+                   46: SpriteImage_Podoboo,
+                   49: SpriteImage_UnusedSeesaw,
+                   50: SpriteImage_FallingPlatform,
+                   52: SpriteImage_UnusedRotPlatforms,
+                   53: SpriteImage_Quicksand,
+                   55: SpriteImage_UnusedRisingSeesaw,
+                   57: SpriteImage_KoopaTroopa,
+                   58: SpriteImage_KoopaParatroopa,
+                   60: SpriteImage_SpikeTop,
+                   61: SpriteImage_BigBoo,
+                   62: SpriteImage_SpinningFirebar,
+                   64: SpriteImage_OutdoorsFog,
+                   73: SpriteImage_GroundPiranha,
+                   74: SpriteImage_BigGroundPiranha,
+                   75: SpriteImage_GroundFiretrap,
+                   76: SpriteImage_BigGroundFiretrap,
+                   78: SpriteImage_CloudTrampoline,
+                   81: SpriteImage_OldStoneBlock_SpikesLeft,
+                   82: SpriteImage_OldStoneBlock_SpikesRight,
+                   83: SpriteImage_OldStoneBlock_SpikesLeftRight,
+                   84: SpriteImage_OldStoneBlock_SpikesTop,
+                   85: SpriteImage_OldStoneBlock_SpikesBottom,
+                   86: SpriteImage_OldStoneBlock_SpikesTopBottom,
+                   87: SpriteImage_TrampolineWall,
+                   92: SpriteImage_BulletBillLauncher,
+                   96: SpriteImage_RotationControllerSwaying,
+                   97: SpriteImage_RotationControlledSolidBetaPlatform,
+                   99: SpriteImage_PipeEnemyGenerator,
+                   103: SpriteImage_PlatformGenerator,
+                   105: SpriteImage_Pokey,
+                   106: SpriteImage_LinePlatform,
+                   107: SpriteImage_RotationControlledPassBetaPlatform,
+                   109: SpriteImage_ChainBall,
+                   110: SpriteImage_Sunlight,
+                   113: SpriteImage_Flagpole,
+                   114: SpriteImage_FlameCannon,
+                   115: SpriteImage_Cheep,
+                   116: SpriteImage_CoinCheep,
+                   117: SpriteImage_PulseFlameCannon,
+                   122: SpriteImage_OneWayPlatform,
+                   123: SpriteImage_UnusedCastlePlatform,
+                   125: SpriteImage_FenceKoopaHorz,
+                   126: SpriteImage_FenceKoopaVert,
+                   129: SpriteImage_4Spinner,
+                   131: SpriteImage_Boo,
+                   132: SpriteImage_UnusedBlockPlatform1,
+                   133: SpriteImage_StalagmitePlatform,
+                   135: SpriteImage_HangingPlatform,
+                   136: SpriteImage_RotBulletLauncher,
+                   137: SpriteImage_SpikedStakeDown,
+                   138: SpriteImage_Water,
+                   139: SpriteImage_Lava,
+                   140: SpriteImage_SpikedStakeUp,
+                   141: SpriteImage_SpikedStakeRight,
+                   142: SpriteImage_SpikedStakeLeft,
+                   143: SpriteImage_Arrow,
+                   145: SpriteImage_FloatingBarrel,
+                   147: SpriteImage_Coin,
+                   148: SpriteImage_Spring,
+                   149: SpriteImage_RotationControllerSpinning,
+                   156: SpriteImage_RedCoinRing,
+                   157: SpriteImage_BigBrick,
+                   158: SpriteImage_FireSnake,
+                   160: SpriteImage_UnusedBlockPlatform2,
+                   161: SpriteImage_PipeBubbles,
+                   166: SpriteImage_BlockTrain,
+                   172: SpriteImage_ScrewMushroomWithBolt,
+                   174: SpriteImage_OneWayGate,
+                   175: SpriteImage_FlyingQBlock,
+                   178: SpriteImage_ScalePlatform,
+                   179: SpriteImage_SpecialExit,
+                   182: SpriteImage_EventDoor,
+                   191: SpriteImage_TileEvent,
+                   192: SpriteImage_LarryKoopaCastleBoss,
+                   193: SpriteImage_Urchin,
+                   194: SpriteImage_MegaUrchin,
+                   195: SpriteImage_HuckitCrab,
+                   196: SpriteImage_Fishbones,
+                   197: SpriteImage_Clam,
+                   198: SpriteImage_GiantGoomba,
+                   201: SpriteImage_Icicle,
+                   205: SpriteImage_GiantBubbleNormal,
+                   206: SpriteImage_Zoom,
+                   207: SpriteImage_QBlock,
+                   208: SpriteImage_QBlockUnused,
+                   209: SpriteImage_BrickBlock,
+                   211: SpriteImage_BowserJr1stController,
+                   212: SpriteImage_RollingHill,
+                   216: SpriteImage_Poison,
+                   219: SpriteImage_LineBlock,
+                   221: SpriteImage_InvisibleBlock,
+                   223: SpriteImage_SpringBlock,
+                   224: SpriteImage_JumboRay,
+                   226: SpriteImage_GiantBubbleUnused,
+                   227: SpriteImage_PipeCannon,
+                   228: SpriteImage_ExtendShroom,
+                   231: SpriteImage_WiggleShroom,
+                   233: SpriteImage_Bulber,
+                   254: SpriteImage_RotControlledPipe,
+                   255: SpriteImage_RotatingQBlock,
+                   257: SpriteImage_MoveWhenOnMetalLavaBlock,
+                   256: SpriteImage_RotatingBrickBlock,
+                   259: SpriteImage_RegularDoor,
+                   260: SpriteImage_MovementController_TwoWayLine,
+                   261: SpriteImage_OldStoneBlock_MovementControlled,
+                   262: SpriteImage_PoltergeistItem,
+                   263: SpriteImage_WaterPiranha,
+                   265: SpriteImage_FallingIcicle,
+                   266: SpriteImage_RotatingFence,
+                   267: SpriteImage_TiltGrate,
+                   268: SpriteImage_LavaGeyser,
+                   269: SpriteImage_Parabomb,
+                   271: SpriteImage_ScaredyRat,
+                   274: SpriteImage_CastleGear,
+                   276: SpriteImage_GhostDoor,
+                   277: SpriteImage_TowerDoor,
+                   278: SpriteImage_CastleDoor,
+                   280: SpriteImage_GiantIceBlock,
+                   286: SpriteImage_WoodCircle,
+                   287: SpriteImage_PathIceBlock,
+                   289: SpriteImage_Box,
+                   291: SpriteImage_Parabeetle,
+                   292: SpriteImage_HeavyParabeetle,
+                   295: SpriteImage_NutPlatform,
+                   296: SpriteImage_MegaBuzzy,
+                   297: SpriteImage_DragonCoaster,
+                   298: SpriteImage_LongCannon,
+                   299: SpriteImage_CannonMulti,
+                   300: SpriteImage_RotCannon,
+                   301: SpriteImage_RotCannonPipe,
+                   303: SpriteImage_MontyMole,
+                   304: SpriteImage_RotFlameCannon,
+                   305: SpriteImage_LightCircle,
+                   306: SpriteImage_RotSpotlight,
+                   309: SpriteImage_SynchroFlameJet,
+                   310: SpriteImage_ArrowSign,
+                   314: SpriteImage_BubbleGen,
+                   316: SpriteImage_BoltBox,
+                   321: SpriteImage_ArrowBlock,
+                   323: SpriteImage_BooCircle,
+                   326: SpriteImage_KingBill,
+                   328: SpriteImage_BubbleCannon,
+                   330: SpriteImage_RopeLadder,
+                   331: SpriteImage_DishPlatform,
+                   334: SpriteImage_CheepGiant,
+                   338: SpriteImage_MovingBulletBillLauncher,
+                   339: SpriteImage_Pipe_MovingUp,
+                   341: SpriteImage_BigShell,
+                   342: SpriteImage_Muncher,
+                   343: SpriteImage_Fuzzy,
+                   346: SpriteImage_HangingChainPlatform,
+                   349: SpriteImage_MortonKoopaCastleBoss,
+                   353: SpriteImage_Pipe_MovingDown,
+                   354: SpriteImage_BrownBlock,
+                   355: SpriteImage_RollingHillWith1Pipe,
+                   356: SpriteImage_BrownBlock,
+                   357: SpriteImage_Fruit,
+                   358: SpriteImage_LavaParticles,
+                   359: SpriteImage_WallLantern,
+                   360: SpriteImage_RollingHillWith8Pipes,
+                   361: SpriteImage_CrystalBlock,
+                   362: SpriteImage_ColoredBox,
+                   364: SpriteImage_RoyKoopaCastleBoss,
+                   365: SpriteImage_LudwigVonKoopaCastleBoss,
+                   366: SpriteImage_CubeKinokoRot,
+                   368: SpriteImage_FlashRaft,
+                   369: SpriteImage_SlidingPenguin,
+                   372: SpriteImage_IggyKoopaCastleBoss,
+                   373: SpriteImage_RaftWater,
+                   374: SpriteImage_SnowWind,
+                   375: SpriteImage_WendyKoopaCastleBoss,
+                   376: SpriteImage_MovingFence,
+                   377: SpriteImage_Pipe_Up,
+                   378: SpriteImage_Pipe_Down,
+                   379: SpriteImage_Pipe_Right,
+                   380: SpriteImage_Pipe_Left,
+                   381: SpriteImage_LemmyKoopaCastleBoss,
+                   382: SpriteImage_ScrewMushroomNoBolt,
+                   383: SpriteImage_KamekController,
+                   384: SpriteImage_PipeCooliganGenerator,
+                   385: SpriteImage_IceBlock,
+                   387: SpriteImage_Bush,
+                   391: SpriteImage_GlowBlock,
+                   396: SpriteImage_MoveWhenOn,
+                   397: SpriteImage_GhostHouseBox,
+                   398: SpriteImage_LongSpikedStakeRight,
+                   400: SpriteImage_LongSpikedStakeLeft,
+                   401: SpriteImage_MassiveSpikedStakeDown,
+                   402: SpriteImage_LineQBlock,
+                   403: SpriteImage_LineBrickBlock,
+                   404: SpriteImage_MassiveSpikedStakeUp,
+                   405: SpriteImage_BowserJr2ndController,
+                   406: SpriteImage_BowserJr3rdController,
+                   407: SpriteImage_BossControllerCastleBoss,
+                   414: SpriteImage_Gabon,
+                   416: SpriteImage_InvisibleOneUp,
+                   420: SpriteImage_GiantGlowBlock,
+                   422: SpriteImage_ToadQBlock,
+                   423: SpriteImage_ToadBrickBlock,
+                   424: SpriteImage_PalmTree,
+                   425: SpriteImage_Jellybeam,
+                   431: SpriteImage_BowserController,
+                   434: SpriteImage_WarpCannon,
+                   435: SpriteImage_GhostFog,
+                   437: SpriteImage_PurplePole,
+                   438: SpriteImage_CageBlocks,
+                   440: SpriteImage_HorizontalRope,
+                   441: SpriteImage_MushroomPlatform,
+                   447: SpriteImage_UnderwaterLamp,
+                   450: SpriteImage_Pipe_EnterableUp,
+                   452: SpriteImage_BowserDoor,
+                   453: SpriteImage_Seaweed,
+                   456: SpriteImage_BossBridge,
+                   458: SpriteImage_LongMetalBar,
+                   460: SpriteImage_SilverGearBlock,
+                   462: SpriteImage_EnormousBlock,
+                   463: SpriteImage_Glare,
+                   464: SpriteImage_SwingingVine,
+                   466: SpriteImage_LavaIronBlock,
+                   467: SpriteImage_MovingGemBlock,
+                   469: SpriteImage_BoltPlatform,
+                   471: SpriteImage_PotPlatform,
+                   472: SpriteImage_IceFloeGenerator,
+                   473: SpriteImage_FloatingIceFloeGenerator,
+                   475: SpriteImage_IceFloe,
+                   478: SpriteImage_BowserSwitchSm,
+                   479: SpriteImage_BowserSwitchLg,
+                   480: SpriteImage_MortonSpikedStake,
+                   481: SpriteImage_FinalBossRubble,
+                   482: SpriteImage_FinalBossEffects,
+               } | get_registered_sprites()
