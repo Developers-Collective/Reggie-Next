@@ -1,0 +1,79 @@
+0:None
+1:Overworld
+2:Underground
+3:Underwater
+4:Mushrooms/Athletic
+5:Ghost House
+6:Pyramids
+7:Snow
+8:Lava
+9:Tower
+10:Castle
+11:Airship
+12:Bonus Area
+13:Drum Rolls
+14:Tower Boss
+15:Castle Boss
+16:Toad House
+17:Airship Boss
+18:Forest
+19:Enemy Ambush
+20:Beach
+21:Lava Cave
+22:Peach's Castle
+23:Credits Jazz
+24:Airship Drums
+25:Bowser
+26:Mega Bowser
+27:Epilogue
+100:Boo Woods 1
+101:Boo Woods 1 (Underground)
+102:Boo Woods 2 - Luigi's Mansion
+103:Boo Woods (Map)
+104:Daisy Dunes 1
+105:Daisy Dunes 2
+106:Daisy Dunes (Map)
+107:Rosalina's Observatory 1
+108:Rosalina's Observatory 2
+109:Rosalina's Observatory 3
+110:Rosalina's Observatory 4
+111:Rosalina's Observatory (Map)
+112:Bowser Jr.'s Airship Fleet 1
+113:Bowser Jr.'s Airship Fleet 2
+114:Bowser Jr.'s Airship Fleet (Map)
+115:Paratroopa Skies 1
+116:Paratroopa Skies 2
+117:Paratroopa Skies (Map)
+118:Paratroopa Skies (Tower)
+119:Boss Incoming! (Paratroopa Skies)
+120:Donkey Kong's Jungle (Overworld)
+121:Donkey Kong's Jungle (Mines)
+122:Donkey Kong's Jungle (Map)
+123:Cheep Cheep's Lake 1
+124:Cheep Cheep's Lake 2
+125:Cheep Cheep's Lake (Map)
+126:Shy Guy's Village 1
+127:Shy Guy's Village 2
+128:Shy Guy's Village 3
+129:Shy Guy's Village (Map)
+130:Daisy Dunes 1
+131:Daisy Dunes 2
+132:Daisy Dunes (Map)
+133:E. Gadd's Factory 1
+134:E. Gadd's Factory 2
+135:E. Gadd's Factory (Map)
+136:Bowsette's Library 1
+137:Bowsette's Library 2
+138:Bowsette's Library (Map) 
+139:Toad Town 1
+140:Toad Town 2
+141:Toad Town (Map)
+142:Yoshi's Island 1
+143:Yoshi's Island 2
+144:Yoshi's Island (Map)
+145:Boss Incoming!
+146:Vs. King Boo (Mario Form)
+156:Vs. King Boo (Boo Form)
+157:Final Level 1
+158:Final Level 2
+159:Final Level (Map)

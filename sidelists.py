@@ -893,6 +893,7 @@ class SpriteList(QtWidgets.QWidget):
     """
     Sprite list viewer
     """
+    # TODO: Make this translatable
 
     # These are straight from the spritedata xml
     # Don't translate these
@@ -902,6 +903,17 @@ class SpriteList(QtWidgets.QWidget):
         "Location", "Physics", "Message", "Path", "Path Movement", "Red Coin",
         "Hill", "Stretch", "Ray", "Coaster", "Bubble Cannon", "Burner",
         "Wiggling", "Panel", "Colony", "Entrance", "Path Node"
+    )
+
+    # This should be translated
+    idtype_names = (
+        "Any",
+        "Star Set ID", "Rotation ID", "Two Way Line ID", "Water Ball ID",
+        "Mushroom ID", "Group ID", "Bolt ID", "Target Event ID",
+        "Triggering Event ID", "Collection ID", "Location ID", "Physics ID",
+        "Message ID", "Path ID", "Path Movement ID", "Red Coin ID", "Hill ID",
+        "Stretch ID", "Ray ID", "Coaster ID", "Bubble Cannon ID", "Burner ID",
+        "Wiggling ID", "Panel ID", "Colony ID", "Entrance ID", "Path Node ID"
     )
 
     def __init__(self):
@@ -918,8 +930,8 @@ class SpriteList(QtWidgets.QWidget):
         # Set of row ids
         self.SearchResults = set()
 
-        self.table = QtWidgets.QTableWidget(0, len(globals_.trans.stringList('Sprites', 23)) + 1)
-        headers = [globals_.trans.string('Sprites', 21), globals_.trans.string('Sprites', 22)] + list(globals_.trans.stringList('Sprites', 23)[1:])
+        self.table = QtWidgets.QTableWidget(0, len(self.idtype_names) + 1)
+        headers = ["ID", "Name"] + list(self.idtype_names[1:])
         self.table.setHorizontalHeaderLabels(headers)
         self.table.verticalHeader().setVisible(False) # hide row numbers
         self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -929,11 +941,11 @@ class SpriteList(QtWidgets.QWidget):
         self.table.itemEntered.connect(self.toolTip)
 
         # populate filter box
-        self.filterbox.addItems(globals_.trans.stringList('Sprites', 23))
+        self.filterbox.addItems(self.idtype_names)
 
         # Make a layout
         search_label = QtWidgets.QLabel(globals_.trans.string('Sprites', 19) + ":")
-        filter_label = QtWidgets.QLabel(globals_.trans.string('Sprites', 20) + ":")
+        filter_label = QtWidgets.QLabel("Filter" + ":")
 
         layout = QtWidgets.QGridLayout()
         layout.setContentsMargins(0, 0, 0, 0)

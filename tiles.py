@@ -4,9 +4,10 @@ import struct
 
 import globals_
 import spritelib as SLib
-import archive
 
 from libs import lh, lz77, tpl, lib_versions
+from revolution.arc.u8 import Arc
+
 
 ################################################################################
 ################################################################################
@@ -889,8 +890,7 @@ def LoadTileset(idx, name, reload_=False):
                                               globals_.trans.string('Err_Decompress', 1, '[file]', name))
                 return False
 
-    arc = archive.U8.load(arcdata)
-
+    arc = Arc.from_file(arcdata, load_files_raw=True)
     def exists(fn):
         nonlocal arc
         try:
@@ -899,11 +899,7 @@ def LoadTileset(idx, name, reload_=False):
             return False
         return True
 
-    # decompress the textures
-    found = exists('BG_tex/%s_tex.bin.LZ' % name)
-    found2 = exists('BG_chk/d_bgchk_%s.bin' % name)
-
-    if found and found2:
+    if f'BG_tex/{name}_tex.bin.LZ' in arc and f'BG_chk/d_bgchk_{name}.bin' in arc:
         comptiledata = arc['BG_tex/%s_tex.bin.LZ' % name]
         colldata = arc['BG_chk/d_bgchk_%s.bin' % name]
     else:
