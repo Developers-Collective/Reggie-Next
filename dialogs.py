@@ -7,7 +7,9 @@ import globals_
 import spritelib as SLib
 from levelitems import ListWidgetItem_SortsByOther, SpriteItem, ZoneItem
 from dirty import SetDirty
-from zones import CameraModeZoomSettingsLayout
+
+from gui.dialogs.zone_dialog import CameraModeZoomSettingsLayout
+
 from ui import createHorzLine
 from raw_data import RawData
 

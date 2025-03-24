@@ -99,7 +99,9 @@ from gamedef import GameDefMenu, LoadGameDef
 from levelitems import LocationItem, ZoneItem, ObjectItem, SpriteItem, EntranceItem, ListWidgetItem_SortsByOther, PathItem, CommentItem, PathEditorLineItem
 from dialogs import AutoSavedInfoDialog, DiagnosticToolDialog, ScreenCapChoiceDialog, AreaChoiceDialog, ObjectTypeSwapDialog, ObjectTilesetSwapDialog, ObjectShiftDialog, MetaInfoDialog, AboutDialog, CameraProfilesDialog
 from background import BGDialog
-from zones import ZonesDialog
+
+from gui.dialogs.zone_dialog import ZonesDialog, CameraModeZoomSettingsLayout
+
 from tiles import UnloadTileset, LoadTileset, LoadOverrides
 from area import AreaOptionsDialog
 from level import Level_NSMBW

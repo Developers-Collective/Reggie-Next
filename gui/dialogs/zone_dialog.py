@@ -1,7 +1,22 @@
+"""
+zone_dialog.py
+
+This module defines:
+  - ZonesDialog: a dialog with tabs for each zone.
+  - ZoneTab: a widget for editing a single zone’s properties.
+  - CameraModeZoomSettingsLayout: a custom layout for camera mode and zoom settings.
+
+Dependencies:
+  - PyQt5
+  - common, globals_, ui, and levelitems
+"""
+
 from PyQt5 import QtWidgets, QtCore
 
 import common
 import globals_
+
+from gui.components.combo_box import ReggieComboBox
 from ui import GetIcon
 from levelitems import ZoneItem
 
@@ -501,7 +516,7 @@ class ZoneTab(QtWidgets.QWidget):
         self.Audio = QtWidgets.QGroupBox(globals_.trans.string('ZonesDlg', 52))
         self.AutoEditMusic = False
 
-        self.Zone_music = QtWidgets.QComboBox()
+        self.Zone_music = ReggieComboBox()
         self.Zone_music.setToolTip(globals_.trans.string('ZonesDlg', 54))
         for songid, text in globals_.MusicInfo:
             self.Zone_music.addItem(text, songid)
